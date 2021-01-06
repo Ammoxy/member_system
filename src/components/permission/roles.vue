@@ -244,6 +244,11 @@
                         <el-checkbox label="keywordEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
                         <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox>
                       </div>
+                      <div class="level2">
+                        <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
+                        <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                        <!-- <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox> -->
+                      </div>
                     </div>
                   </div>
                 </el-checkbox-group>
