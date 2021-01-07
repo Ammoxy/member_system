@@ -51,50 +51,27 @@
 
         <el-dialog :visible.sync="dialogMerchants" title="添加商家" width="1000px" @close="close">
             <el-form label-width="100px" :model="merchantInfo">
-                <el-form-item label="选择省份">
-                    <el-select v-model="merchantInfo.province_id" placeholder="请选择省份" @change="proChange"
-                        style="margin-right: 10px;">
-                        <el-option v-for="item in proList" :key="item.id" :label="item.name" :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="选择市级">
-                    <el-select v-model="merchantInfo.city_id" placeholder="选择市级" @change="cityChange"
-                        style="margin-right: 10px;">
-                        <el-option v-for="item in cityList" :key="item.id" :label="item.name" :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="选择区级">
-                    <el-select v-model="merchantInfo.district_id" placeholder="请选择省份" style="margin-right: 10px;">
-                        <el-option v-for="item in areaList" :key="item.id" :label="item.name" :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="是否显示商家">
-                    <el-radio-group v-model="merchantInfo.on_shelf">
-                        <el-radio :label="true">是</el-radio>
-                        <el-radio :label="false">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
                 <el-form-item label="商家名称">
                     <el-input v-model="merchantInfo.name"></el-input>
-                </el-form-item>
-                <el-form-item label="商家简介">
-                    <el-input v-model="merchantInfo.intro"></el-input>
                 </el-form-item>
                 <el-form-item label="商家地址">
                     <el-input v-model="merchantInfo.address"></el-input>
                 </el-form-item>
-                <el-form-item label="商家logo">
-                    <el-upload action="https://api.fengniaotuangou.cn/api/upload" ref="upload" :limit="1"
-                        :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess" :on-remove="handleRemove"
-                        :on-exceed="handleExceed" :auto-upload="true" :on-change="handleChange" list-type="picture-card"
-                        :file-list='files'>
-                        <i slot="default" class="el-icon-plus"></i>
-                    </el-upload>
+                <el-form-item label="负责人姓名">
+                    <el-input v-model="merchantInfo.principal_name"></el-input>
                 </el-form-item>
-
+                <el-form-item label="负责人联系方式">
+                    <el-input v-model="merchantInfo.phone"></el-input>
+                </el-form-item>
+                <el-form-item label="上级">
+                    <el-select v-model="merchantInfo.parent_id" placeholder="请选择上级(不选为添加一级分类)" @change="parentChange"
+                        style="margin-right: 10px; width: 300px" clearable>
+                        <el-option v-for="item in parentList" :key="item.id" :label="item.name" :value="item.id"
+                            :disabled="item.type == 3">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                
                 <div class="submit">
                     <el-form-item>
                         <el-button type="primary" @click="newMerchants">提交</el-button>
@@ -146,57 +123,13 @@
                     label: '否',
                     value: 2
                 }],
-                editorOption: {
-                    placeholder: "请输入文档内容",
-                    theme: "snow",
-                    modules: {
-                        toolbar: {
-                            container: [
-                                ["bold", "italic", "underline", "strike"],
-                                ["blockquote", "code-block"],
-                                [{
-                                    direction: "rtl",
-                                }, ],
-                                [{
-                                    size: ["small", false, "large", "huge"],
-                                }, ],
-                                [{
-                                    header: [1, 2, 3, 4, 5, 6, false],
-                                }, ],
-                                [{
-                                        color: [],
-                                    },
-                                    {
-                                        background: [],
-                                    },
-                                ],
-                                [{
-                                    font: [],
-                                }, ],
-                                [{
-                                    align: [],
-                                }, ],
-                                ["clean"],
-                                ["link", "image"],
-                            ],
-                            handlers: {
-                                image: function (value) {
-                                    if (value) {
-                                        document.querySelector(".quill-img input").click();
-                                    } else {
-                                        this.quill.format("image", false);
-                                    }
-                                },
-                            },
-                        },
-                    },
-                },
                 files: [],
                 proList: [],
                 cityList: [],
                 areaList: [],
                 pro_id: '',
-                merchants_name: ''
+                merchants_name: '',
+                parentList: []
             }
         },
 
@@ -247,6 +180,7 @@
             search() {
                 var self = this;
                 self.current = 1;
+                self.loading = true;
                 self.getMerchants(self.current, self.size, self.merchants_name);
             },
 
@@ -307,6 +241,7 @@
                 var self = this;
                 self.files = [];
             },
+            parentChange() {},
             newMerchants() {
                 var self = this;
                 API.createMerchant(self.merchantInfo).then(res => {
@@ -351,36 +286,6 @@
             // 刷新
             refresh() {
                 this.reload();
-            },
-
-            handleRemove(file, fileList) {
-                //移除图片
-                var self = this;
-                self.files = fileList
-                self.merchantInfo.img = ''
-            },
-            beforeAvatarUpload(file) {
-                //文件上传之前调用做一些拦截限制
-                const isLt2M = 300 * 1024;
-                if (!isLt2M) {
-                    this.$message.error("上传图片大小不能超过300KB");
-                }
-                return isLt2M;
-            },
-            handleAvatarSuccess(res, file) {
-                //图片上传成功
-                var self = this;
-                self.merchantInfo.img = file.response.data;
-            },
-            handleExceed(files, fileList) {
-                //图片上传超过数量限制
-                var self = this;
-                self.$message.error("上传图片不能超过1张!");
-            },
-
-            handleChange(file, fileList) {
-                var self = this;
-                self.files = fileList;
             },
         },
     }

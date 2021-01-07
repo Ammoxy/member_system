@@ -16,6 +16,7 @@
         </div>
         <el-table :data="tableDate" border :header-cell-style="{background:'#f0f0f0'}" max-height="620">
             <el-table-column prop="id" label="ID"></el-table-column>
+            <el-table-column prop="sort" label="排序"></el-table-column>
             <el-table-column prop="name" label="商品类型"></el-table-column>
             <el-table-column prop="type" label="类型级别">
                 <template slot-scope="scope">
@@ -35,8 +36,7 @@
                     <div v-if="scope.row.img">
                         <el-popover placement="top-start" title trigger="click">
                             <img :src="scope.row.img" style="max-width: 800px; max-height: 800px" />
-                            <img slot="reference" :src="scope.row.img"
-                                style="max-width: 180px; max-height: 80px" />
+                            <img slot="reference" :src="scope.row.img" style="max-width: 180px; max-height: 80px" />
                         </el-popover>
                     </div>
                     <div v-else>
@@ -86,6 +86,9 @@
                         <el-radio :label="2">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="排序">
+                    <el-input v-model="classifyInfo.sort"></el-input>
+                </el-form-item>
                 <el-form-item label="类型logo">
                     <el-upload action="https://api.fengniaotuangou.cn/api/upload" ref="upload" :limit="1"
                         :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess" :on-remove="handleRemove"
@@ -132,7 +135,8 @@
                     is_show: 1,
                     parent_id: '',
                     type: '',
-                    id: ''
+                    id: '',
+                    sort: 0
                 },
                 files: [],
 
@@ -223,6 +227,7 @@
             search() {
                 var self = this;
                 self.current = 1;
+                self.loading = true;
                 self.getClassify(self.current, self.size, self.state);
             },
 
@@ -235,7 +240,8 @@
                     is_show: 1,
                     parent_id: '',
                     type: '',
-                    id: ''
+                    id: '',
+                    sort: 0
                 };
 
             },
@@ -317,7 +323,8 @@
                         is_show: 2,
                         parent_id: row.parent_id,
                         type: row.type,
-                        id: row.id
+                        id: row.id,
+                        sort: row.sort
                     }
                     API.createClassify(self.classifyInfo).then(res => {
                         self.$message.success("提交成功");
@@ -336,7 +343,8 @@
                         is_show: 2,
                         parent_id: row.parent_id,
                         type: row.type,
-                        id: row.id
+                        id: row.id,
+                        sort: row.sort
                     };
                 } else {
                     self.classifyInfo = {
@@ -345,7 +353,8 @@
                         is_show: 1,
                         parent_id: row.parent_id,
                         type: row.type,
-                        id: row.id
+                        id: row.id,
+                        sort: row.sort
                     };
                 }
                 let urlStr = self.classifyInfo.img.split(",");

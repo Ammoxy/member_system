@@ -26,18 +26,8 @@
                 <el-form-item label="商品简介">
                     <el-input v-model="goodsInfo.intro"></el-input>
                 </el-form-item>
-                <el-form-item label="商品类型">
-                    <el-select v-model="goodsInfo.classify_id" multiple placeholder="请选择类型(可多选)"
-                        @change="classifyChange" style="width: 400px">
-                        <el-option v-for="item in classifyList" :key="item.id" :label="item.name" :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
                 <el-form-item label="价格">
                     <el-input v-model="goodsInfo.price"></el-input>
-                </el-form-item>
-                <el-form-item label="会员价">
-                    <el-input v-model="goodsInfo.vip_price"></el-input>
                 </el-form-item>
                 <el-form-item label="运费">
                     <el-input v-model="goodsInfo.freight"></el-input>
@@ -48,12 +38,6 @@
                         <el-radio :label="2">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <!-- <el-form-item label="购买是否开通会员">
-                    <el-radio-group v-model="goodsInfo.is_open_user">
-                        <el-radio :label="1">是</el-radio>
-                        <el-radio :label="2">否</el-radio>
-                    </el-radio-group>
-                </el-form-item> -->
                 <el-form-item label="商品库存">
                     <el-input v-model="goodsInfo.repertory"></el-input>
                 </el-form-item>
@@ -115,7 +99,6 @@
                 </template>
             </el-table-column>
             <el-table-column prop="price" label="价格"></el-table-column>
-            <el-table-column prop="vip_price" label="会员价"></el-table-column>
             <el-table-column prop="freight" label="运费"></el-table-column>
             <el-table-column prop="is_fetch" label="是否到店自取" width="120">
                 <template slot-scope="scope">
@@ -241,7 +224,6 @@
                     img: '',
                     imgs: [],
                     price: '',
-                    vip_price: '',
                     freight: '',
                     on_shelf: 1,
                     is_fetch: 1,
@@ -249,7 +231,6 @@
                     id: '',
                     sales: 0,
                     browse: 0,
-                    classify_id: [],
                     sort: 0
                 },
                 // merchantList: [],
@@ -267,20 +248,18 @@
                 keyword: '',
                 fileLists: [],
                 files: [],
-                classifyList: [],
                 permissionData: []
             };
         },
         mounted() {
             this.getList(this.current, this.size);
-            this.getClassifyList();
             this.permissionData = localStorage.getItem("permissions").split(",");
         },
         methods: {
             // 表格数据
-            getList(cur, list, name) {
+            getList(cur, list, name, on_shelf) {
                 var self = this;
-                API.goods(cur, list, name).then(res => {
+                API.userGoods(cur, list, name, on_shelf).then(res => {
                     // console.log(res);
                     self.loading = false;
                     self.tableData = res.result.data;
@@ -288,17 +267,6 @@
                 }).catch(err => {
                     self.loading = false;
                 })
-            },
-            getClassifyList() {
-                var self = this;
-                API.seleClassify().then(res => {
-                    self.classifyList = res.result;
-                })
-            },
-            classifyChange(val) {
-                console.log(val);
-                var self = this;
-                self.goodsInfo.classify_id = val;
             },
             search() {
                 var self = this;
@@ -332,7 +300,7 @@
 
             addGoods() {
                 var self = this;
-                if (self.permissionData.includes("commodityAdd")) {
+                if (self.permissionData.includes("memberGoodsAdd")) {
                     self.dialogGood = true;
                 } else {
                     self.$message.warning("无权操作");
@@ -344,7 +312,6 @@
                     img: '',
                     imgs: [],
                     price: '',
-                    vip_price: '',
                     freight: '',
                     on_shelf: 1,
                     is_fetch: 1,
@@ -352,7 +319,6 @@
                     id: '',
                     sales: 0,
                     browse: 0,
-                    classify_id: [],
                     sort: 0
                 };
                 if (self.$refs.upload) {
@@ -363,7 +329,7 @@
             newMerchants() {
                 var self = this;
                 console.log(self.goodsInfo);
-                API.createGoods(self.goodsInfo).then(res => {
+                API.createUserGoods(self.goodsInfo).then(res => {
                     if (res.code == 10000) {
                         self.$message.success("添加成功");
                         self.dialogGood = false;
@@ -376,14 +342,10 @@
             handleDetail(index, row) {
                 var self = this;
                 self.id = row.id;
-                var arr = [];
-                if (self.permissionData.includes("commodityEdit")) {
+                if (self.permissionData.includes("memberGoodsEdit")) {
                     self.dialogGood = true;
-                    API.goodDetail(self.id).then(res => {
-                        res.result.classify.forEach(item => {
-                            arr.push(item.id)
-                        })
-                        console.log(res.result);
+                    API.userGoodDetail(self.id).then(res => {
+                        
                         self.goodsInfo = {
                             name: res.result.name,
                             intro: res.result.intro,
@@ -391,7 +353,6 @@
                             img: res.result.img,
                             imgs: res.result.imgs,
                             price: res.result.price,
-                            vip_price: res.result.vip_price,
                             freight: res.result.freight,
                             on_shelf: res.result.on_shelf,
                             is_fetch: res.result.is_fetch,
@@ -399,7 +360,6 @@
                             id: res.result.id,
                             sales: res.result.sales,
                             browse: res.result.browse,
-                            classify_id: arr,
                             sort: res.result.sort
                         }
                         self.fileLists = self.goodsInfo.imgs.map(t => {

@@ -27,7 +27,15 @@ const dynamicRouter = [{
 			name: 'commodityList',
 			component: () => import('@/components/commodity/commodityList.vue'),
 			meta: {
-				title: '商品列表'
+				title: '普通商品列表'
+			}
+		},
+		{
+			path: '/memberGoods',
+			name: 'memberGoods',
+			component: () => import('@/components/commodity/memberGoods.vue'),
+			meta: {
+				title: '会员商品列表'
 			}
 		},
 		{
@@ -35,7 +43,7 @@ const dynamicRouter = [{
 			name: 'keyword',
 			component: () => import('@/components/commodity/keyword.vue'),
 			meta: {
-				title: '关键字'
+				title: '关键字列表'
 			}
 		},
 		{
@@ -43,18 +51,36 @@ const dynamicRouter = [{
 			name: 'activity',
 			component: () => import('@/components/commodity/activity.vue'),
 			meta: {
-				title: '活动'
+				title: '活动列表'
 			}
 		},
 	]
 }, {
-	path: '/banner',
-	name: 'banner',
-	component: () => import('@/views/banner/banner.vue'),
+	path: '/information',
+	name: 'information',
+	component: () => import('@/views/information/index.vue'),
 	meta: {
-		title: '轮播图管理',
+		title: '资讯管理',
 		icon: 'el-icon-picture',
 	},
+	children: [
+		{
+			path: '/banner',
+			name: 'banner',
+			component: () => import('@/components/information/banner.vue'),
+			meta: {
+				title: '轮播图管理'
+			}
+		},
+		{
+			path: '/message',
+			name: 'message',
+			component: () => import('@/views/information/message.vue'),
+			meta: {
+				title: '资讯管理'
+			}
+		},
+	]
 }, {
 	path: '/permission',
 	name: 'permission',

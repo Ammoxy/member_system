@@ -88,6 +88,40 @@ API.delBanner = function (id) {
 		id: id
 	})
 }
+// 添加资讯分类
+API.createDocumentType = function (data) {
+	return axios.post(url.CreateDocumentType, data)
+}
+// 获取资讯分类
+API.documentType = function (currentPage, perPage) {
+	return axios.get(url.DocumentType, {
+		currentPage: currentPage,
+		perPage: perPage
+	})
+}
+// 删除资讯分类
+API.delDocumentType = function (id) {
+	return axios.del(url.DelDocumentType, {
+		id: id
+	})
+}
+// 添加资讯
+API.createDocument = function (data) {
+	return axios.post(url.CreateDocument, data)
+}
+// 获取资讯
+API.document = function (currentPage, perPage) {
+	return axios.get(url.Document, {
+		currentPage: currentPage,
+		perPage: perPage
+	})
+}
+// 删除资讯
+API.delDocument = function (id) {
+	return axios.del(url.DelDocument, {
+		id: id
+	})
+}
 
 // 新增分类
 API.createClassify = function (data) {
@@ -120,17 +154,37 @@ API.createGoods = function (data) {
 	return axios.post(url.CreateGoods, data)
 }
 // 获取商品
-API.goods = function (currentPage, perPage, name, classify_id) {
+API.goods = function (currentPage, perPage, name, classify_id, on_shelf) {
 	return axios.get(url.Goods, {
 		currentPage: currentPage,
 		perPage: perPage,
 		name: name,
-		classify_id: classify_id
+		classify_id: classify_id,
+		on_shelf: on_shelf
 	})
 }
 // 获取商品详情
 API.goodDetail = function (id) {
 	return axios.get(url.GoodDetail, {
+		id: id
+	})
+}
+// 添加会员商品
+API.createUserGoods = function (data) {
+	return axios.post(url.CreateUserGoods, data)
+}
+// 获取会员商品
+API.userGoods = function (currentPage, perPage, name, on_shelf) {
+	return axios.get(url.UserGoods, {
+		currentPage: currentPage,
+		perPage: perPage,
+		name: name,
+		on_shelf: on_shelf
+	})
+}
+// 获取会员商品详情
+API.userGoodDetail = function (id) {
+	return axios.get(url.UserGoodDetail, {
 		id: id
 	})
 }

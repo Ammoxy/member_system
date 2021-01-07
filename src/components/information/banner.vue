@@ -248,7 +248,13 @@
                     loading.close();
                     if (res.code == 10000) {
                         self.getBanner();
-                        self.form = {}
+                        self.form = {
+                            img: '',
+                            id: '',
+                            target: '',
+                            sort: '',
+                            is_show: 1
+                        }
                         self.dialogBanner = false;
                     }
                 }).catch((err) => {

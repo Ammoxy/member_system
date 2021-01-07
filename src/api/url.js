@@ -21,10 +21,16 @@ const url = {
 	'CreateMerchant': BaseURL + '/creation/merchant', // 新增商家
 	'Areas': BaseURL + '/china/areas', // 获取省市区
 	
-	// 轮播图管理
+	// 资讯管理
 	'Banners': BaseURL + '/banner/list', // 获取轮播图
 	'CreateBanner': BaseURL + '/creation/banner', // 新增轮播图
 	'DelBanner': BaseURL + '/banner', // 删除轮播图
+	'DocumentType': BaseURL + '/document/type/list', // 获取资讯分类
+	'CreateDocumentType': BaseURL + '/creation/document/type', // 新增资讯分类
+	'DelDocumentType': BaseURL + '/document/type', // 删除资讯分类
+	'Document': BaseURL + '/document/list', // 获取资讯
+	'CreateDocument': BaseURL + '/creation/document', // 新增资讯
+	'DelDocument': BaseURL + '/document', // 删除资讯
 
 	// 分类管理
 	'Classify': BaseURL + '/classify', // 获取分类/删除分类
@@ -35,6 +41,9 @@ const url = {
 	'Goods': BaseURL + '/goods', // 获取商品列表
 	'CreateGoods': BaseURL + '/creation/good', // 新增商品
 	'GoodDetail': BaseURL + '/good', // 获取商品详情
+	'UserGoods': BaseURL + '/user/goods', // 获取会员商品列表
+	'CreateUserGoods': BaseURL + '/creation/user/good', // 新增会员商品
+	'UserGoodDetail': BaseURL + '/user/good', // 获取会员商品详情
 	'CreateKeyword': BaseURL + '/creation/keyword', // 新增关键词
 	'Keywords': BaseURL + '/keywords', // 获取关键字列表
 	'DelKeyword': BaseURL + '/keyword', // 删除关键字
