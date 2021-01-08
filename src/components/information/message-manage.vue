@@ -9,20 +9,17 @@
     <el-table :data="tableDate" border :header-cell-style="{background:'#f0f0f0'}" max-height="620">
       <el-table-column prop="id" label="资讯ID"></el-table-column>
       <el-table-column prop="type.title" label="资讯类型"></el-table-column>
-      <el-table-column prop="cover" label="资讯缩略图">
+      <el-table-column prop="img" label="资讯缩略图">
         <template slot-scope="scope">
-          <img :src="scope.row.cover" style="max-width:180px;max-height:80px;" />
+          <img :src="scope.row.img" style="max-width:180px;max-height:80px;" />
         </template>
       </el-table-column>
-      <el-table-column prop="page_view" label="资讯浏览量"></el-table-column>
-      <el-table-column prop="is_show" label="推送状态">
+      <!-- <el-table-column prop="page_view" label="资讯浏览量"></el-table-column> -->
+      <el-table-column prop="is_show" label="是否显示">
         <template slot-scope="scope">
-          <div v-if="scope.row.is_show == 1">
-            <span>已推送</span>
-          </div>
-          <div v-if="scope.row.is_show == 2">
-            <span>未推送</span>
-          </div>
+          <el-switch v-model="scope.row.is_show" active-color="#2a9f93"
+            @change="notifyChange(scope.row.is_show, scope.$index, scope.row)">
+          </el-switch>
         </template>
       </el-table-column>
       <el-table-column prop="updated_at" label="更新时间"></el-table-column>
@@ -43,7 +40,7 @@
       <el-form label-width="80px" :model="form">
         <el-form-item label="资讯类型">
           <el-select v-model="form.document_type" placeholder="请选择资讯分类" @change="typeChange">
-            <el-option v-for="item in typeList" :key="item.id" :label="item.title" :value="item.id"></el-option>
+            <el-option v-for="item in typeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="资讯标题">
@@ -110,7 +107,7 @@
     },
     data() {
       return {
-        loading: false,
+        loading: true,
         hasNewImage: false,
         disabled: false,
         dialogMessageMs: false,
@@ -125,15 +122,6 @@
         },
         title: "",
         typeList: [],
-        pushList: [{
-            is_show: 1,
-            name: "推送",
-          },
-          {
-            is_show: 2,
-            name: "取消推送",
-          },
-        ],
         editorOption: {
           placeholder: "请输入文档内容",
           theme: "snow",
@@ -188,29 +176,35 @@
         imageUrl: "",
         is_show: 2,
         name: "",
-        files: []
+        files: [],
+        is_show: false
       };
     },
     mounted() {
       this.getMessageType();
-      this.getMessages();
+      this.getMessages(this.current, this.size);
     },
     methods: {
       // 获取资讯类型
       getMessageType() {
         var self = this;
         API.documentType().then((res) => {
+          console.log(res);
           self.typeList = res.result;
         });
       },
       // 获取资讯内容
-      getMessages() {
+      getMessages(currentPage, perPage, document_type) {
         var self = this;
-        API.document()
+        API.document(currentPage, perPage, document_type)
           .then((res) => {
             self.loading = false;
-            self.tableDate = res.result;
-            self.total = res.total;
+            res.result.data.forEach(item => {
+              // console.log(item);
+              item.is_show == 1 ? item.is_show = true : item.is_show = false;
+            })
+            self.tableDate = res.result.data;
+            self.total = res.result.total;
           })
           .catch((err) => {
             self.loading = false;
@@ -221,14 +215,14 @@
         var self = this;
         self.current = val;
         self.loading = true;
-        self.getMessages();
+        self.getMessages(val, self.size);
       },
       // 每页多少条
       sizeChange(val) {
         var self = this;
         self.size = val;
         self.loading = true;
-        self.getMessages();
+        self.getMessages(1, val);
         self.current = 1;
       },
 
@@ -258,28 +252,71 @@
         API.createDocument(self.form).then((res) => {
           self.$message.success("提交成功");
           self.dialogMessageMs = false;
-          self.getMessages();
+          self.getMessages(self.current, self.size);
           self.form = {};
         });
       },
       handleEdit(index, row) {
         var self = this;
         self.dialogMessageMs = true;
-        self.form = row;
-        self.form = {
-          id: row.id,
-          document_type: row.document_type,
-          title: row.title,
-          content: row.content,
-          img: row.img,
-          is_show: row.is_show,
-        };
+        if (Number(row.is_show) == 0) {
+          self.form = {
+            id: row.id,
+            document_type: row.document_type,
+            title: row.title,
+            content: row.content,
+            img: row.img,
+            is_show: 2
+          };
+        } else {
+          self.form = {
+            id: row.id,
+            document_type: row.document_type,
+            title: row.title,
+            content: row.content,
+            img: row.img,
+            is_show: 1
+          };
+        }
         let urlStr = self.form.img.split(",");
         urlStr.forEach(item => {
           let obj = new Object();
           obj.url = item;
-          self.fileLists.push(obj);
+          self.files.push(obj);
         });
+      },
+
+      notifyChange(val, index, row) {
+        var self = this;
+        console.log(row);
+        if (val == true) {
+          self.form = {
+            id: row.id,
+            document_type: row.document_type,
+            title: row.title,
+            content: row.content,
+            img: row.img,
+            is_show: 1
+          }
+          API.createDocument(self.form).then(res => {
+            self.$message.success("提交成功");
+            self.getMessages(self.current, self.size);
+          })
+        } else {
+          self.form = {
+            img: row.img,
+            id: row.id,
+            document_type: row.document_type,
+            title: row.title,
+            content: row.content,
+            img: row.img,
+            is_show: 2
+          }
+          API.createDocument(self.form).then(res => {
+            self.$message.success("提交成功");
+            self.getMessages(self.current, self.size);
+          })
+        }
       },
 
       handleDelete(index, row) {
@@ -292,7 +329,7 @@
         API.delDocument(self.id).then((res) => {
           self.$message.success("删除成功");
           self.dialogDel = false;
-          self.getMessages();
+          self.getMessages(self.current, self.size);
         });
       },
 
@@ -323,7 +360,7 @@
         //移除图片
         var self = this;
         self.files = fileList
-        self.goodsInfo.img = ''
+        self.form.img = ''
       },
       beforeAvatarUpload(file) {
         //文件上传之前调用做一些拦截限制
@@ -340,7 +377,7 @@
       handleAvatarSuccess(res, file) {
         //图片上传成功
         var self = this;
-        self.goodsInfo.img = file.response.data;
+        self.form.img = file.response.data;
       },
       handleExceed(files, fileList) {
         //图片上传超过数量限制

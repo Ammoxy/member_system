@@ -52,8 +52,8 @@
               <el-option v-for="item in rolesList" :key="item.title" :label="item.name" :value="item.title"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="选择商家">
-            <el-select v-model="form.merchant_id" placeholder="选择商家">
+          <el-form-item label="选择部门">
+            <el-select v-model="form.merchant_id" placeholder="选择部门">
               <el-option v-for="item in merchantList" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>

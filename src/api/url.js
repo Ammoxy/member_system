@@ -16,9 +16,10 @@ const url = {
 	'ResetPassword': BaseURL + '/reset/password', // 重置密码
 	'HealthUser': BaseURL + '/health/user', // 获取专员列表/编辑
 	
-	// 商家管理
-	'Merchants': BaseURL + '/merchant/list', // 获取商家
-	'CreateMerchant': BaseURL + '/creation/merchant', // 新增商家
+	// 部门管理
+	'Merchants': BaseURL + '/merchant/list', // 获取部门
+	'CreateMerchant': BaseURL + '/creation/merchant', // 新增部门
+	'MerchantsSelect': BaseURL + '/merchant/select/list', // 获取部门选择列表
 	'Areas': BaseURL + '/china/areas', // 获取省市区
 	
 	// 资讯管理

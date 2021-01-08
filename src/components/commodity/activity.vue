@@ -71,8 +71,7 @@
                     <div v-if="scope.row.img">
                         <el-popover placement="top-start" title trigger="click">
                             <img :src="scope.row.img" style="max-width: 800px; max-height: 800px" />
-                            <img slot="reference" :src="scope.row.img"
-                                style="max-width: 180px; max-height: 80px" />
+                            <img slot="reference" :src="scope.row.img" style="max-width: 180px; max-height: 80px" />
                         </el-popover>
                     </div>
                     <div v-else>
@@ -148,7 +147,6 @@
                     discount: '',
                     date: '',
                     on_shelf: 1,
-                    id: ''
                 },
                 fileLists: [],
                 files: [],
@@ -215,7 +213,6 @@
                         discount: '',
                         date: '',
                         on_shelf: 1,
-                        id: ''
                     };
                     if (self.$refs.upload) {
                         self.$refs.upload.clearFiles();
@@ -227,14 +224,19 @@
 
             newActivity() {
                 var self = this;
-                API.createActivity(self.activityInfo).then(res => {
-                    if (res.code == 10000) {
-                        self.$message.success(res.toast);
-                        self.dialogActivity = false;
-                        self.activityInfo = {};
-                        self.getList(self.current, self.size);
-                    }
-                })
+                if (self.activityInfo.img && self.activityInfo.background && self.activityInfo.good_id && self
+                    .activityInfo.discount && self.activityInfo.date) {
+                    API.createActivity(self.activityInfo).then(res => {
+                        if (res.code == 10000) {
+                            self.$message.success(res.toast);
+                            self.dialogActivity = false;
+                            self.activityInfo = {};
+                            self.getList(self.current, self.size);
+                        }
+                    })
+                } else {
+                    self.$message.warning('请填写完整信息');
+                }
             },
 
             handleDetail(index, row) {

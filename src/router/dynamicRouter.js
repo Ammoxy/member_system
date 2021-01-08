@@ -3,8 +3,8 @@ const dynamicRouter = [{
 	name: 'merchant',
 	component: () => import('@/views/merchant/merchant.vue'),
 	meta: {
-		title: '商家管理',
-		icon: 'el-icon-s-shop',
+		title: '部门管理',
+		icon: 'el-icon-user-solid',
 	},
 }, {
 	path: '/classify',

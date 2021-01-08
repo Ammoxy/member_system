@@ -1,10 +1,10 @@
 <template>
   <div v-loading="loading" element-loading-text="拼命加载中">
-    <div class="handle-box">
+    <!-- <div class="handle-box">
       <div class="btn">
         <el-button type="primary" @click="addRole">添加角色</el-button>
       </div>
-    </div>
+    </div> -->
 
     <el-table :data="tableData" border :header-cell-style="{ background: '#f0f0f0' }">
       <el-table-column prop="id" label="ID"></el-table-column>
@@ -88,7 +88,7 @@
                     <div class="tb" style="width: 20%;">
                       <div class="level1">
                         <el-checkbox label="merchant" @change="oneChange">
-                          <span style="font-weight: bold;">商家管理</span>
+                          <span style="font-weight: bold;">部门管理</span>
                         </el-checkbox>
                       </div>
                     </div>
@@ -218,7 +218,7 @@
                     <div class="tb" style="width: 20%;">
                       <div class="level1">
                         <el-checkbox label="merchant" @change="oneChange">
-                          <span style="font-weight: bold;">商家管理</span>
+                          <span style="font-weight: bold;">部门管理</span>
                         </el-checkbox>
                       </div>
                     </div>
@@ -427,29 +427,29 @@
         self.current = 1;
       },
 
-      addRole() {
-        var self = this;
-        if (self.permissionData.includes("roleAdd")) {
-          self.dialogRole = true;
-        } else {
-          self.$message.warning("无权操作");
-        }
-        self.form = {
-          name: "",
-          permissions: [],
-        };
-        self.disabledRole = false;
-        self.checkAll = true;
-        if (self.checkAll === true) {
-          if (localStorage.getItem('username') == 'admin') {
-            self.form.permissions = self.checkAll ? self.adminPermission : [];
-            console.log(self.form.permissions)
-          } else {
-            self.form.permissions = self.checkAll ? self.permissionList : [];
-            console.log(self.form.permissions)
-          }
-        }
-      },
+      // addRole() {
+      //   var self = this;
+      //   if (self.permissionData.includes("roleAdd")) {
+      //     self.dialogRole = true;
+      //   } else {
+      //     self.$message.warning("无权操作");
+      //   }
+      //   self.form = {
+      //     name: "",
+      //     permissions: [],
+      //   };
+      //   self.disabledRole = false;
+      //   self.checkAll = true;
+      //   if (self.checkAll === true) {
+      //     if (localStorage.getItem('username') == 'admin') {
+      //       self.form.permissions = self.checkAll ? self.adminPermission : [];
+      //       console.log(self.form.permissions)
+      //     } else {
+      //       self.form.permissions = self.checkAll ? self.permissionList : [];
+      //       console.log(self.form.permissions)
+      //     }
+      //   }
+      // },
       newRole() {
         var self = this;
         console.log(self.form);

@@ -2,10 +2,10 @@
     <div v-loading="loading" element-loading-text="拼命加载中">
         <div class="handle-box">
             <div class="btn">
-                <el-button type="primary" @click="addMerchants">添加商家</el-button>
+                <el-button type="primary" @click="addMerchants">添加部门</el-button>
             </div>
             <div class="btn">
-                <el-input v-model="merchants_name" placeholder="输入商家名称" class="input-with-select"
+                <el-input v-model="merchants_name" placeholder="输入部门名称" class="input-with-select"
                     @keyup.enter.native="search(merchants_name)">
                     <el-button slot="append" icon="el-icon-search" @click="search(merchants_name)"></el-button>
                     <el-button slot="append" icon="el-icon-refresh" @click="refresh"></el-button>
@@ -15,25 +15,37 @@
 
         <el-table :data="tableData" border :header-cell-style="{ background: '#f0f0f0' }">
             <el-table-column prop="id" label="ID"></el-table-column>
-            <el-table-column prop="name" label="商家名称"></el-table-column>
-            <el-table-column prop="province.name" label="商家所在省份"></el-table-column>
-            <el-table-column prop="city.name" label="商家所在城市"></el-table-column>
-            <el-table-column prop="district.name" label="商家所在区域"></el-table-column>
-            <el-table-column prop="address" label="商家地址"></el-table-column>
-            <el-table-column prop="img" label="商家logo" align="center">
+            <el-table-column prop="name" label="部门名称"></el-table-column>
+            <el-table-column prop="type" label="部门级别">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.type == 1">
+                        <span>一级部门</span>
+                    </div>
+                    <div v-if="scope.row.type == 2">
+                        <span>二级部门</span>
+                    </div>
+                    <div v-if="scope.row.type == 3">
+                        <span>三级部门</span>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column prop="principal_name" label="负责人姓名"></el-table-column>
+            <el-table-column prop="phone" label="负责人手机号"></el-table-column>
+            <!-- <el-table-column prop="district.name" label="部门所在区域"></el-table-column> -->
+            <el-table-column prop="address" label="详细地址"></el-table-column>
+            <!-- <el-table-column prop="img" label="部门logo" align="center">
                 <template slot-scope="scope">
                     <div v-if="scope.row.img">
                         <el-popover placement="top-start" title trigger="click">
                             <img :src="scope.row.img" style="max-width: 800px; max-height: 800px" />
-                            <img slot="reference" :src="scope.row.img"
-                                style="max-width: 180px; max-height: 80px" />
+                            <img slot="reference" :src="scope.row.img" style="max-width: 180px; max-height: 80px" />
                         </el-popover>
                     </div>
                     <div v-else>
                         <span>--暂无图片--</span>
                     </div>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="created_at" label="创建时间"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
@@ -49,13 +61,10 @@
             </el-pagination>
         </div>
 
-        <el-dialog :visible.sync="dialogMerchants" title="添加商家" width="1000px" @close="close">
-            <el-form label-width="100px" :model="merchantInfo">
-                <el-form-item label="商家名称">
+        <el-dialog :visible.sync="dialogMerchants" title="添加部门" width="1000px">
+            <el-form label-width="120px" :model="merchantInfo">
+                <el-form-item label="部门名称">
                     <el-input v-model="merchantInfo.name"></el-input>
-                </el-form-item>
-                <el-form-item label="商家地址">
-                    <el-input v-model="merchantInfo.address"></el-input>
                 </el-form-item>
                 <el-form-item label="负责人姓名">
                     <el-input v-model="merchantInfo.principal_name"></el-input>
@@ -64,14 +73,41 @@
                     <el-input v-model="merchantInfo.phone"></el-input>
                 </el-form-item>
                 <el-form-item label="上级">
-                    <el-select v-model="merchantInfo.parent_id" placeholder="请选择上级(不选为添加一级分类)" @change="parentChange"
+                    <el-select v-model="merchantInfo.parent_id" placeholder="请选择上级(不选为添加一级部门)" @change="parentChange"
                         style="margin-right: 10px; width: 300px" clearable>
                         <el-option v-for="item in parentList" :key="item.id" :label="item.name" :value="item.id"
                             :disabled="item.type == 3">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                
+                <el-form-item label="地址经纬度">
+                    <div class="address-info">
+                        <el-input v-model="merchantInfo.longitude" placeholder="经度显示" style="margin-right: 10px;">
+                        </el-input>
+                        <el-input v-model="merchantInfo.latitude" placeholder="纬度显示" style="margin-right: 10px;">
+                        </el-input>
+                    </div>
+                </el-form-item>
+                <el-form-item label="地图显示">
+                    <el-switch v-model="showMap" active-color="#2a9f93">
+                    </el-switch>
+                    <div v-if="showMap">
+                        <v-map @callback="getLoc"></v-map>
+                    </div>
+                </el-form-item>
+                <el-form-item label="详细地址">
+                    <el-input v-model="merchantInfo.address"></el-input>
+                </el-form-item>
+                <el-form-item label="创建账号">
+                    <el-switch v-model="showUser" active-color="#2a9f93">
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="账号" v-if="showUser">
+                    <el-input v-model="merchantInfo.username" placeholder="请输入账号"></el-input>
+                </el-form-item>
+                <el-form-item label="输入密码" v-if="showUser">
+                    <el-input v-model="merchantInfo.password" placeholder="请输入密码" type="password"></el-input>
+                </el-form-item>
                 <div class="submit">
                     <el-form-item>
                         <el-button type="primary" @click="newMerchants">提交</el-button>
@@ -83,17 +119,14 @@
 </template>
 
 <script>
+    import vMap from '@/components/map/map-iframe.vue'
     import API from "@/api/index.js";
     import md5 from "blueimp-md5";
-    import {
-        quillEditor
-    } from "vue-quill-editor";
-    import "quill/dist/quill.core.css";
-    import "quill/dist/quill.snow.css";
-    import "quill/dist/quill.bubble.css";
     export default {
         inject: ["reload"],
-
+        components: {
+            vMap
+        },
         data() {
             return {
                 loading: true,
@@ -107,14 +140,15 @@
                 permissionData: [],
                 merchantInfo: {
                     name: '',
-                    intro: '',
-                    img: '',
+                    type: '',
                     address: '',
-                    province_id: '',
-                    city_id: '',
-                    district_id: '',
-                    on_shelf: 1,
-                    id: ''
+                    phone: '',
+                    principal_name: '',
+                    parent_id: '',
+                    longitude: '',
+                    latitude: '',
+                    username: '',
+                    password: '',
                 },
                 stateList: [{
                     label: '是',
@@ -123,24 +157,36 @@
                     label: '否',
                     value: 2
                 }],
-                files: [],
-                proList: [],
-                cityList: [],
-                areaList: [],
-                pro_id: '',
+                // files: [],
+                // proList: [],
+                // cityList: [],
+                // areaList: [],
+                // pro_id: '',
                 merchants_name: '',
-                parentList: []
+                parentList: [],
+                showMap: false, // 地图显示
+                limit: 10,
+                showUser: false
+
             }
         },
 
         mounted() {
             this.permissionData = localStorage.getItem("permissions").split(",");
             this.getMerchants(this.current, this.size);
-            this.getPro();
+            this.getParent();
         },
 
         methods: {
-            // 获取商家
+            getParent() {
+                var self = this;
+                API.merchantsSelect()
+                    .then((res) => {
+                        console.log(res);
+                        self.parentList = res.result;
+                    })
+            },
+            // 获取部门
             getMerchants(cur, list, name) {
                 var self = this;
                 API.merchants(cur, list, name)
@@ -185,38 +231,38 @@
             },
 
             // 获取省市区
-            getPro() {
-                var self = this;
-                API.areas(1, 0).then(res => {
-                    console.log(res);
-                    self.proList = res.result;
-                })
-            },
-            getCity(val) {
-                var self = this;
-                API.areas(2, val).then(res => {
-                    console.log(res);
-                    self.cityList = res.result;
-                })
-            },
-            getArea(val) {
-                var self = this;
-                API.areas(3, val).then(res => {
-                    self.areaList = res.result;
-                })
-            },
+            // getPro() {
+            //     var self = this;
+            //     API.areas(1, 0).then(res => {
+            //         console.log(res);
+            //         self.proList = res.result;
+            //     })
+            // },
+            // getCity(val) {
+            //     var self = this;
+            //     API.areas(2, val).then(res => {
+            //         console.log(res);
+            //         self.cityList = res.result;
+            //     })
+            // },
+            // getArea(val) {
+            //     var self = this;
+            //     API.areas(3, val).then(res => {
+            //         self.areaList = res.result;
+            //     })
+            // },
             // 选择省市区
-            proChange(val) {
-                var self = this;
-                self.merchantInfo.city_id = '';
-                self.merchantInfo.district_id = '';
-                self.getCity(val);
-            },
-            cityChange(val) {
-                var self = this;
-                self.merchantInfo.district_id = '';
-                self.getArea(val);
-            },
+            // proChange(val) {
+            //     var self = this;
+            //     self.merchantInfo.city_id = '';
+            //     self.merchantInfo.district_id = '';
+            //     self.getCity(val);
+            // },
+            // cityChange(val) {
+            //     var self = this;
+            //     self.merchantInfo.district_id = '';
+            //     self.getArea(val);
+            // },
 
             addMerchants() {
                 var self = this;
@@ -225,34 +271,74 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
-                self.merchantInfo = {
-                    name: '',
-                    intro: '',
-                    img: '',
-                    address: '',
-                    province_id: '',
-                    city_id: '',
-                    district_id: '',
-                    on_shelf: 1,
-                    id: ''
-                };
+                if (self.showUser) {
+                    self.merchantInfo = {
+                        name: '',
+                        type: '',
+                        address: '',
+                        phone: '',
+                        principal_name: '',
+                        parent_id: '',
+                        longitude: '',
+                        latitude: '',
+                        username: '',
+                        password: '',
+                    };
+                } else {
+                    self.merchantInfo = {
+                        name: '',
+                        type: '',
+                        address: '',
+                        phone: '',
+                        principal_name: '',
+                        parent_id: '',
+                        longitude: '',
+                        latitude: '',
+                    };
+                }
+
             },
-            close() {
+            // close() {
+            //     var self = this;
+            //     // self.files = [];
+            // },
+            parentChange(val) {
                 var self = this;
-                self.files = [];
+                let obj = {};
+                obj = this.parentList.find((item) => {
+                    return item.id == val;
+                });
+                var type = obj.type;
+                switch (type) {
+                    case 1:
+                        self.merchantInfo.type = 2;
+                        break;
+                    case 2:
+                        self.merchantInfo.type = 3;
+                        break;
+                }
+                self.merchantInfo.parent_id = val;
             },
-            parentChange() {},
             newMerchants() {
                 var self = this;
-                API.createMerchant(self.merchantInfo).then(res => {
-                    if (res.code == 10000) {
-                        self.$message.success("提交成功");
-                        self.dialogMerchants = false;
-                        self.getMerchants(self.current, self.size);
-                        self.merchantInfo = {};
-                        self.merchantInfo.img = '';
-                    }
-                })
+                if (self.merchantInfo.parent_id == '') {
+                    self.merchantInfo.parent_id = 0;
+                    self.merchantInfo.type = 1;
+                }
+                if (self.merchantInfo.name && self.merchantInfo.type && self.merchantInfo.address && self.merchantInfo
+                    .phone && self.merchantInfo.principal_name) {
+                    API.createMerchant(self.merchantInfo).then(res => {
+                        if (res.code == 10000) {
+                            self.$message.success("提交成功");
+                            self.dialogMerchants = false;
+                            self.getMerchants(self.current, self.size);
+                            self.merchantInfo = {};
+                            self.merchantInfo.img = '';
+                        }
+                    })
+                } else {
+                    self.$message.warning("请填写完整信息");
+                }
             },
 
             handleEdit(index, row) {
@@ -262,25 +348,49 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
-                self.merchantInfo = {
-                    name: row.name,
-                    intro: row.intro,
-                    img: row.img,
-                    address: row.address,
-                    province_id: row.province_id,
-                    city_id: row.city_id,
-                    district_id: row.district_id,
-                    on_shelf: 1,
-                    id: row.id
-                };
-                let urlStr = self.merchantInfo.img.split(",");
-                urlStr.forEach(item => {
-                    let obj = new Object();
-                    obj.url = item;
-                    self.files.push(obj);
-                });
-                self.getCity(self.merchantInfo.province_id);
-                self.getArea(self.merchantInfo.city_id);
+                if (self.showUser) {
+                    self.merchantInfo = {
+                        name: row.name,
+                        type: row.type,
+                        address: row.address,
+                        phone: row.phone,
+                        principal_name: row.principal_name,
+                        parent_id: row.parent_id,
+                        longitude: row.longitude,
+                        latitude: row.latitude,
+                        username: row.username,
+                        password: row.password,
+                        id: row.id
+                    };
+                } else {
+                    self.merchantInfo = {
+                        name: row.name,
+                        type: row.type,
+                        address: row.address,
+                        phone: row.phone,
+                        principal_name: row.principal_name,
+                        parent_id: row.parent_id,
+                        longitude: row.longitude,
+                        latitude: row.latitude,
+                        id: row.id
+                    };
+                }
+                // let urlStr = self.merchantInfo.img.split(",");
+                // urlStr.forEach(item => {
+                //     let obj = new Object();
+                //     obj.url = item;
+                //     self.files.push(obj);
+                // });
+                // self.getCity(self.merchantInfo.province_id);
+                // self.getArea(self.merchantInfo.city_id);
+            },
+
+            getLoc(mapData) {
+                console.log(mapData);
+                this.merchantInfo.longitude = mapData.latlng.lng;
+                this.merchantInfo.latitude = mapData.latlng.lat;
+                this.merchantInfo.address = mapData.poiaddress + mapData.poiname;
+                this.showMap = false;
             },
 
             // 刷新
@@ -292,5 +402,11 @@
 </script>
 
 <style lang="scss" scoped>
+    .map {
+        border: solid 1px #ccc;
+    }
 
+    .address-info {
+        display: flex;
+    }
 </style>

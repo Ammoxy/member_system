@@ -51,7 +51,7 @@ API.healthUser = function () {
 	return axios.get(url.HealthUser, {})
 }
 
-// 获取商家
+// 获取部门
 API.merchants = function (currentPage, perPage, name) {
 	return axios.get(url.Merchants, {
 		currentPage: currentPage,
@@ -59,7 +59,11 @@ API.merchants = function (currentPage, perPage, name) {
 		name: name
 	})
 }
-// 新增商家
+// 获取部门选择列表
+API.merchantsSelect = function () {
+	return axios.get(url.MerchantsSelect, {})
+}
+// 新增部门
 API.createMerchant = function (data) {
 	return axios.post(url.CreateMerchant, data)
 }
@@ -110,10 +114,11 @@ API.createDocument = function (data) {
 	return axios.post(url.CreateDocument, data)
 }
 // 获取资讯
-API.document = function (currentPage, perPage) {
+API.document = function (currentPage, perPage, document_type) {
 	return axios.get(url.Document, {
 		currentPage: currentPage,
-		perPage: perPage
+		perPage: perPage,
+		document_type: document_type
 	})
 }
 // 删除资讯

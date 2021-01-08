@@ -20,33 +20,53 @@
                         <el-radio :label="2">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="是否允许到店自取">
+                    <el-radio-group v-model="goodsInfo.is_fetch" @change="changeFetch">
+                        <el-radio :label="1">是</el-radio>
+                        <el-radio :label="2">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="可以到店自取的部门" v-if="goodsInfo.is_fetch == 1">
+                    <el-select v-model="goodsInfo.have_merchant" multiple placeholder="请选择部门(可多选)"
+                        @change="merchantChange" style="width: 400px">
+                        <el-option v-for="(item1, index) in merchantList" :key="index" :label="item1.name"
+                            :value="item1.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="商品名称">
                     <el-input v-model="goodsInfo.name"></el-input>
                 </el-form-item>
                 <el-form-item label="商品简介">
                     <el-input v-model="goodsInfo.intro"></el-input>
                 </el-form-item>
-                <el-form-item label="价格">
-                    <el-input v-model="goodsInfo.price"></el-input>
-                </el-form-item>
-                <el-form-item label="运费">
-                    <el-input v-model="goodsInfo.freight"></el-input>
-                </el-form-item>
-                <el-form-item label="是否允许到店自取">
-                    <el-radio-group v-model="goodsInfo.is_fetch">
-                        <el-radio :label="1">是</el-radio>
-                        <el-radio :label="2">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="商品库存">
-                    <el-input v-model="goodsInfo.repertory"></el-input>
-                </el-form-item>
-                <el-form-item label="商品销量">
-                    <el-input v-model="goodsInfo.sales"></el-input>
-                </el-form-item>
-                <el-form-item label="浏览量">
-                    <el-input v-model="goodsInfo.browse"></el-input>
-                </el-form-item>
+                <div class="momey-info">
+                    <el-form-item label="市级佣金">
+                        <el-input v-model="goodsInfo.good_commissions[0].money" placeholder="请输入佣金(市级)"></el-input>
+                    </el-form-item>
+                    <el-form-item label="区县佣金">
+                        <el-input v-model="goodsInfo.good_commissions[1].money" placeholder="请输入佣金(区县)"></el-input>
+                    </el-form-item>
+                    <el-form-item label="社区佣金">
+                        <el-input v-model="goodsInfo.good_commissions[2].money" placeholder="请输入佣金(社区)"></el-input>
+                    </el-form-item>
+                </div>
+                <div class="momey-info">
+                    <el-form-item label="价格">
+                        <el-input v-model="goodsInfo.price"></el-input>
+                    </el-form-item>
+                    <el-form-item label="运费">
+                        <el-input v-model="goodsInfo.freight"></el-input>
+                    </el-form-item>
+                </div>
+                <div class="momey-info">
+                    <el-form-item label="商品销量">
+                        <el-input v-model="goodsInfo.sales"></el-input>
+                    </el-form-item>
+                    <el-form-item label="浏览量">
+                        <el-input v-model="goodsInfo.browse"></el-input>
+                    </el-form-item>
+                </div>
                 <el-form-item label="商品图片">
                     <el-upload action="https://api.fengniaotuangou.cn/api/upload" ref="upload" :limit="1"
                         :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess" :on-remove="handleRemove"
@@ -120,7 +140,6 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="repertory" label="库存"></el-table-column>
             <el-table-column prop="sales" label="销量"></el-table-column>
             <el-table-column prop="browse" label="浏览量"></el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="180"></el-table-column>
@@ -227,13 +246,22 @@
                     freight: '',
                     on_shelf: 1,
                     is_fetch: 1,
-                    repertory: '',
-                    id: '',
+                    have_merchant: [],
                     sales: 0,
                     browse: 0,
-                    sort: 0
+                    sort: 0,
+                    good_commissions: [{
+                        type: 1,
+                        money: ''
+                    }, {
+                        type: 2,
+                        money: ''
+                    }, {
+                        type: 3,
+                        money: ''
+                    }]
                 },
-                // merchantList: [],
+                merchantList: [],
                 name: '',
                 stateList: [{
                         value: 1,
@@ -253,9 +281,18 @@
         },
         mounted() {
             this.getList(this.current, this.size);
+            this.getParent();
             this.permissionData = localStorage.getItem("permissions").split(",");
         },
         methods: {
+            getParent() {
+                var self = this;
+                API.merchantsSelect()
+                    .then((res) => {
+                        // console.log(res);
+                        self.merchantList = res.result;
+                    })
+            },
             // 表格数据
             getList(cur, list, name, on_shelf) {
                 var self = this;
@@ -305,22 +342,59 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
-                self.goodsInfo = {
-                    name: '',
-                    intro: '',
-                    detail: '',
-                    img: '',
-                    imgs: [],
-                    price: '',
-                    freight: '',
-                    on_shelf: 1,
-                    is_fetch: 1,
-                    repertory: '',
-                    id: '',
-                    sales: 0,
-                    browse: 0,
-                    sort: 0
-                };
+                if (self.isYes) {
+                    self.goodsInfo = {
+                        name: '',
+                        intro: '',
+                        detail: '',
+                        img: '',
+                        imgs: [],
+                        price: '',
+                        freight: '',
+                        on_shelf: 1,
+                        is_fetch: 1,
+                        have_merchant: [],
+                        sales: 0,
+                        browse: 0,
+                        sort: 0,
+                        good_commissions: [{
+                            type: 1,
+                            money: ''
+                        }, {
+                            type: 2,
+                            money: ''
+                        }, {
+                            type: 3,
+                            money: ''
+                        }]
+                    };
+                } else {
+                    self.goodsInfo = {
+                        name: '',
+                        intro: '',
+                        detail: '',
+                        img: '',
+                        imgs: [],
+                        price: '',
+                        freight: '',
+                        on_shelf: 1,
+                        is_fetch: 1,
+                        sales: 0,
+                        browse: 0,
+                        sort: 0,
+                        good_commissions: [{
+                            type: 1,
+                            money: ''
+                        }, {
+                            type: 2,
+                            money: ''
+                        }, {
+                            type: 3,
+                            money: ''
+                        }]
+                    };
+                }
+
                 if (self.$refs.upload) {
                     self.$refs.upload.clearFiles();
                 }
@@ -329,38 +403,138 @@
             newMerchants() {
                 var self = this;
                 console.log(self.goodsInfo);
-                API.createUserGoods(self.goodsInfo).then(res => {
-                    if (res.code == 10000) {
-                        self.$message.success("添加成功");
-                        self.dialogGood = false;
-                        self.goodsInfo = {};
-                        self.getList(self.current, self.size);
-                    }
-                })
+                if (self.goodsInfo.name && self.goodsInfo.img && self.goodsInfo.imgs && self.goodsInfo.price && self
+                    .goodsInfo.good_commissions) {
+                    API.createUserGoods(self.goodsInfo).then(res => {
+                        if (res.code == 10000) {
+                            self.$message.success("添加成功");
+                            self.dialogGood = false;
+                            self.getList(self.current, self.size);
+                        }
+                    })
+                } else {
+                    self.$message.warning("请填写完整信息");
+                }
+            },
+            changeFetch(val) {
+                console.log(val);
+                if (val == 1) {
+                    self.isYes = true
+                } else {
+                    self.isYes = false
+                }
+            },
+
+            merchantChange(val) {
+                console.log(val);
+                var self = this;
+                self.goodsInfo.have_merchant = val;
             },
 
             handleDetail(index, row) {
                 var self = this;
                 self.id = row.id;
+                var have_merchant = []
                 if (self.permissionData.includes("memberGoodsEdit")) {
                     self.dialogGood = true;
+
                     API.userGoodDetail(self.id).then(res => {
-                        
-                        self.goodsInfo = {
-                            name: res.result.name,
-                            intro: res.result.intro,
-                            detail: res.result.detail,
-                            img: res.result.img,
-                            imgs: res.result.imgs,
-                            price: res.result.price,
-                            freight: res.result.freight,
-                            on_shelf: res.result.on_shelf,
-                            is_fetch: res.result.is_fetch,
-                            repertory: res.result.repertory,
-                            id: res.result.id,
-                            sales: res.result.sales,
-                            browse: res.result.browse,
-                            sort: res.result.sort
+                        res.result.have_merchant.forEach(item => {
+                            have_merchant.push(item.id);
+                        })
+
+                        if (res.result.good_commission.length > 0 && res.result.is_fetch == 1) {
+                            self.goodsInfo = {
+                                name: res.result.name,
+                                intro: res.result.intro,
+                                detail: res.result.detail,
+                                img: res.result.img,
+                                imgs: res.result.imgs,
+                                price: res.result.price,
+                                freight: res.result.freight,
+                                on_shelf: res.result.on_shelf,
+                                is_fetch: res.result.is_fetch,
+                                have_merchant: have_merchant,
+                                id: res.result.id,
+                                sales: res.result.sales,
+                                browse: res.result.browse,
+                                sort: res.result.sort,
+                                good_commissions: [{
+                                        type: 1,
+                                        money: res.result.good_commission[0].money,
+                                        id: res.result.good_commission[0].id,
+                                    },
+                                    {
+                                        type: 2,
+                                        money: res.result.good_commission[1].money,
+                                        id: res.result.good_commission[1].id,
+                                    },
+                                    {
+                                        type: 3,
+                                        money: res.result.good_commission[2].money,
+                                        id: res.result.good_commission[2].id,
+                                    }
+                                ]
+                            }
+                        } else if (res.result.good_commission.length > 0 && res.result.is_fetch == 2) {
+                            self.goodsInfo = {
+                                name: res.result.name,
+                                intro: res.result.intro,
+                                detail: res.result.detail,
+                                img: res.result.img,
+                                imgs: res.result.imgs,
+                                price: res.result.price,
+                                freight: res.result.freight,
+                                on_shelf: res.result.on_shelf,
+                                is_fetch: res.result.is_fetch,
+                                id: res.result.id,
+                                sales: res.result.sales,
+                                browse: res.result.browse,
+                                sort: res.result.sort,
+                                good_commissions: [{
+                                        type: 1,
+                                        money: res.result.good_commission[0].money,
+                                        id: res.result.good_commission[0].id,
+                                    },
+                                    {
+                                        type: 2,
+                                        money: res.result.good_commission[1].money,
+                                        id: res.result.good_commission[1].id,
+                                    },
+                                    {
+                                        type: 3,
+                                        money: res.result.good_commission[2].money,
+                                        id: res.result.good_commission[2].id,
+                                    }
+                                ]
+                            }
+                        } else if (res.result.good_commission.length == 0) {
+                            self.goodsInfo = {
+                                name: res.result.name,
+                                intro: res.result.intro,
+                                detail: res.result.detail,
+                                img: res.result.img,
+                                imgs: res.result.imgs,
+                                price: res.result.price,
+                                freight: res.result.freight,
+                                on_shelf: res.result.on_shelf,
+                                is_fetch: res.result.is_fetch,
+                                have_merchant: have_merchant,
+                                id: res.result.id,
+                                sales: res.result.sales,
+                                browse: res.result.browse,
+                                sort: res.result.sort,
+                                good_commissions: [{
+                                    type: 1,
+                                    money: ''
+                                }, {
+                                    type: 2,
+                                    money: ''
+                                }, {
+                                    type: 3,
+                                    money: ''
+                                }]
+                            }
                         }
                         self.fileLists = self.goodsInfo.imgs.map(t => {
                             var obj = {};
@@ -529,5 +703,9 @@
 
     .wth {
         width: 100px;
+    }
+
+    .momey-info {
+        display: flex;
     }
 </style>

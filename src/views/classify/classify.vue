@@ -89,7 +89,11 @@
                 <el-form-item label="排序">
                     <el-input v-model="classifyInfo.sort"></el-input>
                 </el-form-item>
-                <el-form-item label="类型logo">
+                <el-form-item label="类型图片">
+                    <el-switch v-model="have_img" active-color="#2a9f93">
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="图片" v-if="have_img">
                     <el-upload action="https://api.fengniaotuangou.cn/api/upload" ref="upload" :limit="1"
                         :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess" :on-remove="handleRemove"
                         :on-exceed="handleExceed" :auto-upload="true" :on-change="handleChange" list-type="picture-card"
@@ -135,7 +139,6 @@
                     is_show: 1,
                     parent_id: '',
                     type: '',
-                    id: '',
                     sort: 0
                 },
                 files: [],
@@ -161,7 +164,7 @@
                         label: "三级分类",
                     },
                 ],
-
+                have_img: false
             }
         },
 
@@ -234,16 +237,24 @@
             addClassify() {
                 var self = this;
                 self.dialogClassify = true;
-                self.classifyInfo = {
-                    name: '',
-                    img: '',
-                    is_show: 1,
-                    parent_id: '',
-                    type: '',
-                    id: '',
-                    sort: 0
-                };
-
+                if (self.have_img) {
+                    self.classifyInfo = {
+                        name: '',
+                        img: '',
+                        is_show: 1,
+                        parent_id: '',
+                        type: '',
+                        sort: 0
+                    };
+                } else {
+                    self.classifyInfo = {
+                        name: '',
+                        is_show: 1,
+                        parent_id: '',
+                        type: '',
+                        sort: 0
+                    };
+                }
             },
             close() {
                 var self = this;
@@ -278,6 +289,8 @@
                 if (self.classifyInfo.parent_id == '') {
                     self.classifyInfo.parent_id = 0;
                     self.classifyInfo.type = 1;
+                }
+                if (self.classifyInfo.name) {
                     API.createClassify(self.classifyInfo).then(res => {
                         if (res.code == 10000) {
                             self.$message.success("提交成功");
@@ -288,15 +301,7 @@
                         }
                     })
                 } else {
-                    API.createClassify(self.classifyInfo).then(res => {
-                        if (res.code == 10000) {
-                            self.$message.success("提交成功");
-                            self.dialogClassify = false;
-                            self.getClassify(self.current, self.size);
-                            self.merchantInfo = {};
-                            self.merchantInfo.img = '';
-                        }
-                    })
+                    self.$message.warning("请填写分类名称");
                 }
             },
 
@@ -336,33 +341,56 @@
             handleEdit(index, row) {
                 var self = this;
                 self.dialogClassify = true;
-                if (Number(row.is_show) == 0) {
-                    self.classifyInfo = {
-                        name: row.name,
-                        img: row.img,
-                        is_show: 2,
-                        parent_id: row.parent_id,
-                        type: row.type,
-                        id: row.id,
-                        sort: row.sort
-                    };
+                if (self.have_img) {
+                    if (Number(row.is_show) == 0) {
+                        self.classifyInfo = {
+                            name: row.name,
+                            img: row.img,
+                            is_show: 2,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    } else {
+                        self.classifyInfo = {
+                            name: row.name,
+                            img: row.img,
+                            is_show: 1,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    }
+                    let urlStr = self.classifyInfo.img.split(",");
+                    urlStr.forEach(item => {
+                        let obj = new Object();
+                        obj.url = item;
+                        self.files.push(obj);
+                    });
                 } else {
-                    self.classifyInfo = {
-                        name: row.name,
-                        img: row.img,
-                        is_show: 1,
-                        parent_id: row.parent_id,
-                        type: row.type,
-                        id: row.id,
-                        sort: row.sort
-                    };
+                    if (Number(row.is_show) == 0) {
+                        self.classifyInfo = {
+                            name: row.name,
+                            is_show: 2,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    } else {
+                        self.classifyInfo = {
+                            name: row.name,
+                            is_show: 1,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    }
                 }
-                let urlStr = self.classifyInfo.img.split(",");
-                urlStr.forEach(item => {
-                    let obj = new Object();
-                    obj.url = item;
-                    self.files.push(obj);
-                });
+
             },
             handleDelete(index, row) {
                 var self = this;

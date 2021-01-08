@@ -139,16 +139,20 @@
 
             newKeywords() {
                 var self = this;
-                API.createKeyword(self.form).then(res => {
-                    if (res.code == 10000) {
-                        self.$message.success(res.toast);
-                        self.dialogKeyword = false;
-                        self.tableData = res.result.data;
-                        self.total = res.result.total;
-                        self.form = {};
-                        self.getKeywords(self.current, self.size);
-                    }
-                })
+                if (self.form.keyword) {
+                    API.createKeyword(self.form).then(res => {
+                        if (res.code == 10000) {
+                            self.$message.success(res.toast);
+                            self.dialogKeyword = false;
+                            self.tableData = res.result.data;
+                            self.total = res.result.total;
+                            self.form = {};
+                            self.getKeywords(self.current, self.size);
+                        }
+                    })
+                } else {
+                    self.$message.warning('请填填写完整信息');
+                }
             },
 
             handleDelete(index, row) {
@@ -180,7 +184,8 @@
                 }
                 self.form = {
                     count: row.count,
-                    keyword: row.keyword
+                    keyword: row.keyword,
+                    id: row.id
                 }
             },
             // 选择搜索方式
