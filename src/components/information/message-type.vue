@@ -6,9 +6,10 @@
             </div>
         </div>
 
-        <el-dialog title="资讯类型" :visible.sync="dialogMessageTy" @close="close" :close-on-click-modal="false" width="800px">
+        <el-dialog title="资讯类型" :visible.sync="dialogMessageTy" @close="close" :close-on-click-modal="false"
+            width="800px">
             <el-form label-width="120px" :model="form">
-              <el-form-item label="资讯类型名称">
+                <el-form-item label="资讯类型名称">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
                 <el-form-item label="是否显示">
@@ -46,8 +47,7 @@
                     <div v-if="scope.row.icon">
                         <el-popover placement="top-start" title trigger="click">
                             <img :src="scope.row.icon" style="max-width: 800px; max-height: 800px" />
-                            <img slot="reference" :src="scope.row.icon"
-                                style="max-width: 180px; max-height: 80px" />
+                            <img slot="reference" :src="scope.row.icon" style="max-width: 180px; max-height: 80px" />
                         </el-popover>
                     </div>
                     <div v-else>
@@ -120,7 +120,6 @@
                 hasNewImage: false,
                 form: {
                     icon: "",
-                    id: "",
                     name: '',
                     sort: 0,
                     is_show: 1
@@ -240,22 +239,26 @@
             // 上传图片
             upload() {
                 var self = this;
-                const loading = self.$loading({
-                    lock: true,
-                    text: "提交中...",
-                    spinner: "el-icon-loading",
-                    background: "rgba(0, 0, 0, 0.7)",
-                });
-                API.createDocumentType(self.form).then((res) => {
-                    loading.close();
-                    if (res.code == 10000) {
-                        self.getBanner();
-                        self.form = {}
-                        self.dialogMessageTy = false;
-                    }
-                }).catch((err) => {
-                    loading.close();
-                });
+                if (self.form.icon && self.form.name) {
+                    const loading = self.$loading({
+                        lock: true,
+                        text: "提交中...",
+                        spinner: "el-icon-loading",
+                        background: "rgba(0, 0, 0, 0.7)",
+                    });
+                    API.createDocumentType(self.form).then((res) => {
+                        loading.close();
+                        if (res.code == 10000) {
+                            self.getBanner();
+                            self.form = {}
+                            self.dialogMessageTy = false;
+                        }
+                    }).catch((err) => {
+                        loading.close();
+                    });
+                } else {
+                    self.$message.warning("请填写完整信息");
+                }
             },
             addMessageTy() {
                 var self = this;
@@ -263,7 +266,6 @@
                 self.hasNewImage = false;
                 self.form = {
                     icon: '',
-                    id: '',
                     name: '',
                     sort: 0,
                     is_show: 1

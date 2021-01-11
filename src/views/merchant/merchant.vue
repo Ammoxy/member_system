@@ -182,7 +182,7 @@
                 var self = this;
                 API.merchantsSelect()
                     .then((res) => {
-                        console.log(res);
+                        // console.log(res);
                         self.parentList = res.result;
                     })
             },
@@ -191,7 +191,7 @@
                 var self = this;
                 API.merchants(cur, list, name)
                     .then((res) => {
-                        console.log(res.result.data);
+                        // console.log(res.result.data);
                         self.loading = false;
                         self.tableData = res.result.data;
                         self.total = res.result.total;
@@ -298,10 +298,6 @@
                 }
 
             },
-            // close() {
-            //     var self = this;
-            //     // self.files = [];
-            // },
             parentChange(val) {
                 var self = this;
                 let obj = {};

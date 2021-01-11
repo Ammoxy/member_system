@@ -44,8 +44,7 @@
                     <div v-if="scope.row.img">
                         <el-popover placement="top-start" title trigger="click">
                             <img :src="scope.row.img" style="max-width: 800px; max-height: 800px" />
-                            <img slot="reference" :src="scope.row.img"
-                                style="max-width: 180px; max-height: 80px" />
+                            <img slot="reference" :src="scope.row.img" style="max-width: 180px; max-height: 80px" />
                         </el-popover>
                     </div>
                     <div v-else>
@@ -118,7 +117,6 @@
                 hasNewImage: false,
                 form: {
                     img: "",
-                    id: "",
                     target: '',
                     sort: '',
                     is_show: 1
@@ -238,28 +236,31 @@
             // 上传图片
             upload() {
                 var self = this;
-                const loading = self.$loading({
-                    lock: true,
-                    text: "提交中...",
-                    spinner: "el-icon-loading",
-                    background: "rgba(0, 0, 0, 0.7)",
-                });
-                API.createBanner(self.form).then((res) => {
-                    loading.close();
-                    if (res.code == 10000) {
-                        self.getBanner();
-                        self.form = {
-                            img: '',
-                            id: '',
-                            target: '',
-                            sort: '',
-                            is_show: 1
+                if (self.form.img && self.form.target && self.form.sort) {
+                    const loading = self.$loading({
+                        lock: true,
+                        text: "提交中...",
+                        spinner: "el-icon-loading",
+                        background: "rgba(0, 0, 0, 0.7)",
+                    });
+                    API.createBanner(self.form).then((res) => {
+                        loading.close();
+                        if (res.code == 10000) {
+                            self.getBanner();
+                            self.form = {
+                                img: '',
+                                target: '',
+                                sort: '',
+                                is_show: 1
+                            }
+                            self.dialogBanner = false;
                         }
-                        self.dialogBanner = false;
-                    }
-                }).catch((err) => {
-                    loading.close();
-                });
+                    }).catch((err) => {
+                        loading.close();
+                    });
+                } else {
+                    self.$message.warning("请填写完整信息");
+                }
             },
             addBanner() {
                 var self = this;
@@ -267,7 +268,6 @@
                 self.hasNewImage = false;
                 self.form = {
                     img: '',
-                    id: '',
                     target: '',
                     sort: '',
                     is_show: 1

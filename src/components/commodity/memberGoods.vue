@@ -623,7 +623,7 @@
                 console.log(file);
                 self.fileLists = fileList
                 self.goodsInfo.imgs.splice(self.goodsInfo.imgs.indexOf(file.url), 1)
-                console.log(self.goodsInfo.imgs);
+                // console.log(self.goodsInfo.imgs);
                 self.hasNewImage1 = false;
             },
             beforeAvatarUpload1(file) {

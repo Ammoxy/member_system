@@ -89,10 +89,6 @@
                 <el-form-item label="排序">
                     <el-input v-model="classifyInfo.sort"></el-input>
                 </el-form-item>
-                <el-form-item label="类型图片">
-                    <el-switch v-model="have_img" active-color="#2a9f93">
-                    </el-switch>
-                </el-form-item>
                 <el-form-item label="图片" v-if="have_img">
                     <el-upload action="https://api.fengniaotuangou.cn/api/upload" ref="upload" :limit="1"
                         :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess" :on-remove="handleRemove"
@@ -219,12 +215,15 @@
                 switch (self.classifyState) {
                     case 1:
                         self.state = 1;
+                        self.have_img = false;
                         break;
                     case 2:
                         self.state = 2;
+                        self.have_img = false;
                         break;
                     case 3:
                         self.state = 3;
+                        self.have_img = true;
                 }
             },
             search() {
@@ -237,6 +236,7 @@
             addClassify() {
                 var self = this;
                 self.dialogClassify = true;
+                self.have_img = false;
                 if (self.have_img) {
                     self.classifyInfo = {
                         name: '',
@@ -265,22 +265,38 @@
                 var self = this;
                 API.seleClassify().then(res => {
                     self.parentList = res.result;
+                    res.result.forEach(item => {
+                        if (item.type == 1) {
+                            item.name = item.name + ' ' + '(一级)'
+                        } else if (item.type == 2) {
+                            item.name = item.name + ' ' + '(二级)'
+                        } else if (item.type == 3) {
+                            item.name = item.name + ' ' + '(三级)'
+                        }
+                    })
                 })
             },
             parentChange(val) {
                 var self = this;
-                let obj = {};
-                obj = this.parentList.find((item) => {
-                    return item.id == val;
-                });
-                var type = obj.type;
-                switch (type) {
-                    case 1:
-                        self.classifyInfo.type = 2;
-                        break;
-                    case 2:
-                        self.classifyInfo.type = 3;
-                        break;
+                if (val) {
+                    let obj = {};
+                    obj = this.parentList.find((item) => {
+                        return item.id == val;
+                    });
+                    var type = obj.type;
+                    switch (type) {
+                        case 1:
+                            self.classifyInfo.type = 2;
+                            self.have_img = false;
+                            break;
+                        case 2:
+                            self.classifyInfo.type = 3;
+                            self.have_img = true;
+                            break;
+                    }
+                } else {
+                    self.classifyInfo.type = 1;
+                    self.have_imga = false;
                 }
                 self.classifyInfo.parent_id = val;
             },
@@ -307,7 +323,6 @@
 
             notifyChange(val, index, row) {
                 var self = this;
-                // console.log(row);
                 if (val == true) {
                     self.classifyInfo = {
                         name: row.name,
@@ -341,28 +356,31 @@
             handleEdit(index, row) {
                 var self = this;
                 self.dialogClassify = true;
-                if (self.have_img) {
-                    if (Number(row.is_show) == 0) {
-                        self.classifyInfo = {
-                            name: row.name,
-                            img: row.img,
-                            is_show: 2,
-                            parent_id: row.parent_id,
-                            type: row.type,
-                            id: row.id,
-                            sort: row.sort
-                        };
-                    } else {
-                        self.classifyInfo = {
-                            name: row.name,
-                            img: row.img,
-                            is_show: 1,
-                            parent_id: row.parent_id,
-                            type: row.type,
-                            id: row.id,
-                            sort: row.sort
-                        };
-                    }
+                
+                self.have_img = true;
+                if (Number(row.is_show) == 0) {
+                    self.classifyInfo = {
+                        name: row.name,
+                        img: row.img,
+                        is_show: 2,
+                        parent_id: row.parent_id,
+                        type: row.type,
+                        id: row.id,
+                        sort: row.sort
+                    };
+                } else {
+                    self.classifyInfo = {
+                        name: row.name,
+                        img: row.img,
+                        is_show: 1,
+                        parent_id: row.parent_id,
+                        type: row.type,
+                        id: row.id,
+                        sort: row.sort
+                    };
+                }
+                if (row.type == 3) {
+                    self.have_img = true;
                     let urlStr = self.classifyInfo.img.split(",");
                     urlStr.forEach(item => {
                         let obj = new Object();
@@ -370,27 +388,9 @@
                         self.files.push(obj);
                     });
                 } else {
-                    if (Number(row.is_show) == 0) {
-                        self.classifyInfo = {
-                            name: row.name,
-                            is_show: 2,
-                            parent_id: row.parent_id,
-                            type: row.type,
-                            id: row.id,
-                            sort: row.sort
-                        };
-                    } else {
-                        self.classifyInfo = {
-                            name: row.name,
-                            is_show: 1,
-                            parent_id: row.parent_id,
-                            type: row.type,
-                            id: row.id,
-                            sort: row.sort
-                        };
-                    }
-                }
+                    self.have_img = false;
 
+                }
             },
             handleDelete(index, row) {
                 var self = this;

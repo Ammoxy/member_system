@@ -8,7 +8,7 @@
 
     <el-table :data="tableDate" border :header-cell-style="{background:'#f0f0f0'}" max-height="620">
       <el-table-column prop="id" label="资讯ID"></el-table-column>
-      <el-table-column prop="type.title" label="资讯类型"></el-table-column>
+      <el-table-column prop="type_text" label="资讯类型"></el-table-column>
       <el-table-column prop="img" label="资讯缩略图">
         <template slot-scope="scope">
           <img :src="scope.row.img" style="max-width:180px;max-height:80px;" />
@@ -36,7 +36,7 @@
       </el-pagination>
     </div>
 
-    <el-dialog :visible.sync="dialogMessageMs" title="文档编辑" width="60%">
+    <el-dialog :visible.sync="dialogMessageMs" title="文档编辑" width="60%" @close="close">
       <el-form label-width="80px" :model="form">
         <el-form-item label="资讯类型">
           <el-select v-model="form.document_type" placeholder="请选择资讯分类" @change="typeChange">
@@ -113,7 +113,6 @@
         dialogMessageMs: false,
         dialogDel: false,
         form: {
-          id: "",
           document_type: "",
           title: "",
           content: "",
@@ -232,7 +231,6 @@
         self.dialogMessageMs = true;
         self.hasNewImage = false;
         self.form = {
-          id: "",
           document_type: "",
           title: "",
           content: "",
@@ -243,18 +241,26 @@
           self.$refs.upload.clearFiles();
         }
       },
+      close() {
+        var self = this;
+        self.files = []
+      },
       typeChange(val) {
         this.form.document_type = val;
       },
       // 提交文档
       newMessageMs() {
         var self = this;
-        API.createDocument(self.form).then((res) => {
-          self.$message.success("提交成功");
-          self.dialogMessageMs = false;
-          self.getMessages(self.current, self.size);
-          self.form = {};
-        });
+        if (self.form.document_type && self.form.title && self.form.img && self.form.content) {
+          API.createDocument(self.form).then((res) => {
+            self.$message.success("提交成功");
+            self.dialogMessageMs = false;
+            self.getMessages(self.current, self.size);
+            self.form = {};
+          });
+        } else {
+            self.$message.warning("请填写完整信息");
+        }
       },
       handleEdit(index, row) {
         var self = this;
