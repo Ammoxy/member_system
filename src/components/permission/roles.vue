@@ -171,6 +171,49 @@
                       </div>
                     </div>
                   </div>
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="commodity" @change="oneChange">
+                          <span style="font-weight: bold;">健康专员</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <!-- <div class="tb tr" style="width: 20%;">
+                      <div class="level2">
+                        <el-checkbox label="commodityList" @change="oneChange" class="permission-span">普通商品列表
+                        </el-checkbox>
+                        <el-checkbox label="memberGoods" @change="oneChange" class="permission-span">会员商品列表
+                        </el-checkbox>
+                        <el-checkbox label="keyword" @change="oneChange" class="permission-span">关键字
+                        </el-checkbox>
+                        <el-checkbox label="activity" @change="oneChange" class="permission-span">活动
+                        </el-checkbox>
+                      </div>
+                    </div> -->
+                    <!-- <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <el-checkbox label="commodityAdd" @change="oneChange" class="permission-span">新增普通商品
+                        </el-checkbox>
+                        <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="memberGoodsAdd" @change="oneChange" class="permission-span">新增会员商品
+                        </el-checkbox>
+                        <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="keywordAdd" @change="oneChange" class="permission-span">新增关键字</el-checkbox>
+                        <el-checkbox label="keywordEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                        <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
+                        <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                      </div>
+                    </div> -->
+                  </div>
                 </el-checkbox-group>
               </div>
             </div>
@@ -342,6 +385,7 @@
           "activity",
           "activityAdd",
           "kactivityEdit",
+          "attache",
 
           "information",
           "banner",
@@ -380,6 +424,7 @@
           "activity",
           "activityAdd",
           "kactivityEdit",
+          "attache"
         ],
 
         dialogDel: false,

@@ -288,6 +288,7 @@
                         case 1:
                             self.classifyInfo.type = 2;
                             self.have_img = false;
+                            self.classifyInfo.img = '';
                             break;
                         case 2:
                             self.classifyInfo.type = 3;
@@ -296,7 +297,7 @@
                     }
                 } else {
                     self.classifyInfo.type = 1;
-                    self.have_imga = false;
+                    self.have_img = false;
                 }
                 self.classifyInfo.parent_id = val;
             },
@@ -312,8 +313,7 @@
                             self.$message.success("提交成功");
                             self.dialogClassify = false;
                             self.getClassify(self.current, self.size);
-                            self.merchantInfo = {};
-                            self.merchantInfo.img = '';
+                            window.location.reload();
                         }
                     })
                 } else {
@@ -356,31 +356,29 @@
             handleEdit(index, row) {
                 var self = this;
                 self.dialogClassify = true;
-                
-                self.have_img = true;
-                if (Number(row.is_show) == 0) {
-                    self.classifyInfo = {
-                        name: row.name,
-                        img: row.img,
-                        is_show: 2,
-                        parent_id: row.parent_id,
-                        type: row.type,
-                        id: row.id,
-                        sort: row.sort
-                    };
-                } else {
-                    self.classifyInfo = {
-                        name: row.name,
-                        img: row.img,
-                        is_show: 1,
-                        parent_id: row.parent_id,
-                        type: row.type,
-                        id: row.id,
-                        sort: row.sort
-                    };
-                }
                 if (row.type == 3) {
                     self.have_img = true;
+                    if (Number(row.is_show) == 0) {
+                        self.classifyInfo = {
+                            name: row.name,
+                            img: row.img,
+                            is_show: 2,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    } else {
+                        self.classifyInfo = {
+                            name: row.name,
+                            img: row.img,
+                            is_show: 1,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    }
                     let urlStr = self.classifyInfo.img.split(",");
                     urlStr.forEach(item => {
                         let obj = new Object();
@@ -389,7 +387,25 @@
                     });
                 } else {
                     self.have_img = false;
-
+                    if (Number(row.is_show) == 0) {
+                        self.classifyInfo = {
+                            name: row.name,
+                            is_show: 2,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    } else {
+                        self.classifyInfo = {
+                            name: row.name,
+                            is_show: 1,
+                            parent_id: row.parent_id,
+                            type: row.type,
+                            id: row.id,
+                            sort: row.sort
+                        };
+                    }
                 }
             },
             handleDelete(index, row) {

@@ -56,6 +56,14 @@ const dynamicRouter = [{
 		},
 	]
 }, {
+	path: '/attache',
+	name: 'attache',
+	component: () => import('@/views/attache/attache.vue'),
+	meta: {
+		title: '健康专员',
+		icon: 'el-icon-user-solid',
+	}
+}, {
 	path: '/information',
 	name: 'information',
 	component: () => import('@/views/information/index.vue'),
@@ -63,8 +71,7 @@ const dynamicRouter = [{
 		title: '资讯管理',
 		icon: 'el-icon-picture',
 	},
-	children: [
-		{
+	children: [{
 			path: '/banner',
 			name: 'banner',
 			component: () => import('@/components/information/banner.vue'),
