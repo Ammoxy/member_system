@@ -233,4 +233,22 @@ API.wxUser = function (currentPage, perPage, user_id, nickname) {
 	})
 }
 
+// 分销管理
+// 审核
+API.healthCheck = function (id, state) {
+	return axios.post(url.HealthCheck, {
+		id: id,
+		state: state,
+	})
+}
+// 获取用户列表
+API.healthUserList = function (currentPage, perPage, name, state) {
+	return axios.get(url.HealthUserList, {
+		currentPage: currentPage,
+		perPage: perPage,
+		name: name,
+		state: state
+	})
+}
+
 export default API

@@ -59,7 +59,7 @@
   export default {
     data() {
       return {
-        loading: false,
+        loading: true,
         tableData: [],
 
         current: 1, // 分页

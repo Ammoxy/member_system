@@ -174,45 +174,25 @@
                   <div class="table">
                     <div class="tb" style="width: 20%;">
                       <div class="level1">
-                        <el-checkbox label="commodity" @change="oneChange">
-                          <span style="font-weight: bold;">健康专员</span>
+                        <el-checkbox label="user" @change="oneChange">
+                          <span style="font-weight: bold;">用户列表</span>
                         </el-checkbox>
                       </div>
                     </div>
-                    <!-- <div class="tb tr" style="width: 20%;">
+                    <div class="tb tr" style="width: 20%;">
                       <div class="level2">
-                        <el-checkbox label="commodityList" @change="oneChange" class="permission-span">普通商品列表
-                        </el-checkbox>
-                        <el-checkbox label="memberGoods" @change="oneChange" class="permission-span">会员商品列表
-                        </el-checkbox>
-                        <el-checkbox label="keyword" @change="oneChange" class="permission-span">关键字
-                        </el-checkbox>
-                        <el-checkbox label="activity" @change="oneChange" class="permission-span">活动
+                        <el-checkbox label="attache" @change="oneChange" class="permission-span">健康专员
                         </el-checkbox>
                       </div>
-                    </div> -->
-                    <!-- <div class="tb set" style="width: 60%;">
-                      <div class="level2">
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <!-- <div class="level2">
                         <el-checkbox label="commodityAdd" @change="oneChange" class="permission-span">新增普通商品
                         </el-checkbox>
                         <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="memberGoodsAdd" @change="oneChange" class="permission-span">新增会员商品
-                        </el-checkbox>
-                        <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
-                        </el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="keywordAdd" @change="oneChange" class="permission-span">新增关键字</el-checkbox>
-                        <el-checkbox label="keywordEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                        <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
-                        <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                      </div>
-                    </div> -->
+                      </div> -->
+
+                    </div>
                   </div>
                 </el-checkbox-group>
               </div>
@@ -349,6 +329,7 @@
           name: "",
           id: "",
           permissions: [],
+          title: ''
         },
         tableData: [],
         checkAll: false,
@@ -385,6 +366,7 @@
           "activity",
           "activityAdd",
           "kactivityEdit",
+          "user",
           "attache",
 
           "information",
@@ -424,7 +406,9 @@
           "activity",
           "activityAdd",
           "kactivityEdit",
-          "attache"
+          "attache",
+          "user",
+
         ],
 
         dialogDel: false,
@@ -504,7 +488,7 @@
             self.dialogRole = false;
             self.$message.success("提交成功");
             self.getRoles(self.current, self.size);
-            window.location.reload();
+            // window.location.reload();
           });
         } else {
           self.$message.warning("请补充完整信息");
@@ -520,15 +504,26 @@
         }
         self.disabledRole = true;
         console.log(row);
+        self.form.title = row.title;
         self.form.name = row.name;
         self.form.id = row.id;
         self.form.permissions = row.permissions;
         self.checkAll = row.permissions.length >= self.adminPermission.length;
+        // if (self.checkAll === true) {
+        //   if (localStorage.getItem('username') == 'admin') {
+        //     self.form.permissions = self.checkAll ? self.adminPermission : [];
+        //     console.log(self.form.permissions)
+        //   } else {
+        //     self.form.permissions = self.checkAll ? self.permissionList : [];
+        //     console.log(self.form.permissions)
+        //   }
+        // }
       },
       AllChange(val) {
         var self = this;
-        if (localStorage.getItem("username") == "admin" && self.form.name == "admin") {
+        if (localStorage.getItem("username") == "admin" && self.form.name == "总后台") {
           self.form.permissions = val ? self.adminPermission : [];
+          console.log(self.form.permissions);
         } else {
           self.form.permissions = val ? self.permissionList : [];
         }

@@ -56,13 +56,22 @@ const dynamicRouter = [{
 		},
 	]
 }, {
-	path: '/attache',
-	name: 'attache',
-	component: () => import('@/views/attache/attache.vue'),
+	path: '/user',
+	name: 'user',
+	component: () => import('@/views/user/user.vue'),
 	meta: {
-		title: '健康专员',
+		title: '分销管理',
 		icon: 'el-icon-user-solid',
-	}
+	},
+	children: [{
+			path: '/attache',
+			name: 'attache',
+			component: () => import('@/views/attache/attache.vue'),
+			meta: {
+				title: '健康专员'
+			}
+		},
+	]
 }, {
 	path: '/information',
 	name: 'information',
