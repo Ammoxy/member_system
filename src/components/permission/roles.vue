@@ -175,7 +175,7 @@
                     <div class="tb" style="width: 20%;">
                       <div class="level1">
                         <el-checkbox label="user" @change="oneChange">
-                          <span style="font-weight: bold;">用户列表</span>
+                          <span style="font-weight: bold;">分销管理</span>
                         </el-checkbox>
                       </div>
                     </div>
@@ -184,6 +184,29 @@
                         <el-checkbox label="attache" @change="oneChange" class="permission-span">健康专员
                         </el-checkbox>
                       </div>
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <!-- <div class="level2">
+                        <el-checkbox label="commodityAdd" @change="oneChange" class="permission-span">新增普通商品
+                        </el-checkbox>
+                        <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                      </div> -->
+
+                    </div>
+                  </div>
+                    <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="expert" @change="oneChange">
+                          <span style="font-weight: bold;">专家管理</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;">
+                      <!-- <div class="level2">
+                        <el-checkbox label="attache" @change="oneChange" class="permission-span">健康专员
+                        </el-checkbox>
+                      </div> -->
                     </div>
                     <div class="tb set" style="width: 60%;">
                       <!-- <div class="level2">
@@ -368,6 +391,7 @@
           "kactivityEdit",
           "user",
           "attache",
+          "expert",
 
           "information",
           "banner",
@@ -408,6 +432,7 @@
           "kactivityEdit",
           "attache",
           "user",
+          "expert",
 
         ],
 
@@ -503,12 +528,13 @@
           self.$message.warning("无权操作");
         }
         self.disabledRole = true;
-        console.log(row);
+        // console.log(row.permissions.length);
+        // console.log(self.adminPermission.length);
         self.form.title = row.title;
         self.form.name = row.name;
         self.form.id = row.id;
         self.form.permissions = row.permissions;
-        self.checkAll = row.permissions.length >= self.adminPermission.length;
+        self.checkAll = self.adminPermission.length;
         // if (self.checkAll === true) {
         //   if (localStorage.getItem('username') == 'admin') {
         //     self.form.permissions = self.checkAll ? self.adminPermission : [];

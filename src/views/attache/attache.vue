@@ -34,20 +34,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <!-- <el-table-column prop="nickname" label="昵称"></el-table-column> -->
-            <!-- <el-table-column prop="name" label="名称"></el-table-column> -->
-            <!-- <el-table-column prop="sex" label="性别" width="120px">
-                <template slot-scope="scope">
-                    <span v-text="scope.row.sex == 1 ? '男' : '女'"></span>
-                </template>
-            </el-table-column> -->
-            <!-- <el-table-column prop="phone" label="手机号码"></el-table-column> -->
-            <!-- <el-table-column prop="mandate.created_at" label="是否已授权">
-        <template slot-scope="scope">
-          <span v-text="scope.row.mandate == null ? '未授权' : '已授权'"></span>
-        </template>
-      </el-table-column> -->
-            <!-- <el-table-column prop="mandate.created_at" label="授权时间"></el-table-column> -->
+
             <el-table-column label="操作" width="120px">
                 <template slot-scope="scope">
                     <el-dropdown>
@@ -59,10 +46,17 @@
                             <el-dropdown-item>
                                 <el-button size="mini" type="primary" v-if="scope.row.state == 1"
                                     @click="handleAudit(scope.$index, scope.row)">审核</el-button>
+
+                            </el-dropdown-item>
+                            <el-dropdown-item>
+                                <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
+                                    查看二维码
+                                </el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
+
             </el-table-column>
         </el-table>
 
@@ -79,6 +73,11 @@
                 <el-button type="primary" @click="toAudit">通过</el-button>
                 <el-button type="danger" @click="unAudit">不通过</el-button>
             </span>
+        </el-dialog>
+
+        <!-- 二维码 -->
+        <el-dialog :visible.sync="dialogQRcode" title="二维码" width="50%" align="center">
+            <img :src="qr_code" alt="">
         </el-dialog>
     </div>
 </template>
@@ -99,7 +98,9 @@
                 userId: "", // 搜索用户id
                 nickname: '',
                 dialogAudit: false,
-                id: ''
+                dialogQRcode: false,
+                id: '',
+                qr_code: ''
             }
         },
 
@@ -145,7 +146,7 @@
                 API.healthCheck(id, state).then((res) => {
                     console.log(res);
                     if (res.code = 10000) {
-                        self.$message.success("审核");
+                        self.$message.success("审核成功");
                         self.getList(self.current, self.size);
                         self.dialogAudit = false;
                     }
@@ -161,6 +162,15 @@
                 self.fucAudit(self.id, 3);
             },
 
+            handleQRcode(index, row) {
+                var self = this;
+                if (row.qr_code) {
+                    self.dialogQRcode = true;
+                    self.qr_code = row.qr_code
+                } else {
+                    self.$message.warning("暂无二维码");
+                }
+            },
         }
     }
 </script>

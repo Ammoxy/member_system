@@ -415,11 +415,10 @@
             },
             toDel() {
                 var self = this;
-                self.dialogDel = false;
                 API.delClassify(self.id).then((res) => {
                     self.$message.success("删除成功");
                     self.dialogDel = false;
-                    self.getClassify(this.current, this.size);
+                    self.getClassify(self.current, self.size);
                 });
             },
             // 刷新

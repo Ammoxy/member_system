@@ -72,7 +72,24 @@ const dynamicRouter = [{
 			}
 		},
 	]
-}, {
+},  {
+	path: '/expert',
+	name: 'expert',
+	component: () => import('@/views/expert/expert.vue'),
+	meta: {
+		title: '专家管理',
+		icon: 'el-icon-user-solid',
+	},
+	// children: [{
+	// 		path: '/attache',
+	// 		name: 'attache',
+	// 		component: () => import('@/views/attache/attache.vue'),
+	// 		meta: {
+	// 			title: '健康专员'
+	// 		}
+	// 	},
+	// ]
+},{
 	path: '/information',
 	name: 'information',
 	component: () => import('@/views/information/index.vue'),

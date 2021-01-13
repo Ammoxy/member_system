@@ -57,6 +57,11 @@ const url = {
 	// 分销管理
 	'HealthUserList': BaseURL + '/health/user/list', // 获取健康专员列表
 	'HealthCheck': BaseURL + '/health/check', // 健康专员审核
+
+	// 专家
+	'Specialists': BaseURL + '/specialists', // 专家列表
+	'CreateSpecialists': BaseURL + '/creation/specialist', // 新增专家
+	'DelSpecialist': BaseURL + '/specialist', // 删除专家
 	
 }
 

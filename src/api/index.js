@@ -251,4 +251,23 @@ API.healthUserList = function (currentPage, perPage, name, state) {
 	})
 }
 
+// 新增专家
+API.createSpecialists = function (data) {
+	return axios.post(url.CreateSpecialists, data)
+}
+// 专家列表
+API.specialists = function (currentPage, perPage, name) {
+	return axios.get(url.Specialists, {
+		currentPage: currentPage,
+		perPage: perPage,
+		name: name
+	})
+}
+// 删除专家
+API.delSpecialist = function (id) {
+	return axios.del(url.DelSpecialist, {
+		id: id
+	})
+}
+
 export default API
