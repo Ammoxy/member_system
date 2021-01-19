@@ -243,6 +243,7 @@
                 var self = this;
                 // self.id = row.id;
                 var arr = [];
+                console.log(row);
                 if (self.permissionData.includes("kactivityEdit")) {
                     self.dialogActivity = true;
                     row.goods.forEach(item => {

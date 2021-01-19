@@ -219,7 +219,11 @@
 
             addExpert() {
                 var self = this;
-                self.dialogExpert = true;
+                if (self.permissionData.includes("expertAdd")) {
+                    self.dialogExpert = true;
+                } else {
+                    self.$message.warning("无权操作");
+                }
 
             },
 
@@ -252,30 +256,39 @@
 
             handleEdit(index, row) {
                 var self = this;
-                self.dialogExpert = true;
-                console.log(row);
-                self.expertyInfo = {
-                    name: row.name,
-                    phone: row.phone,
-                    picture: row.picture,
-                    intro: row.intro,
-                    specialty: row.specialty,
-                    details: row.details,
-                    id: row.id
-                };
+                if (self.permissionData.includes("expertEdit")) {
+                    self.dialogExpert = true;
+                    console.log(row);
+                    self.expertyInfo = {
+                        name: row.name,
+                        phone: row.phone,
+                        picture: row.picture,
+                        intro: row.intro,
+                        specialty: row.specialty,
+                        details: row.details,
+                        id: row.id
+                    };
 
-                let urlStr = self.expertyInfo.picture.split(",");
-                urlStr.forEach(item => {
-                    let obj = new Object();
-                    obj.url = item;
-                    self.files.push(obj);
-                });
+                    let urlStr = self.expertyInfo.picture.split(",");
+                    urlStr.forEach(item => {
+                        let obj = new Object();
+                        obj.url = item;
+                        self.files.push(obj);
+                    });
+                } else {
+                    self.$message.warning("无权操作");
+                }
+
             },
 
 
             handleDelete(index, row) {
                 var self = this;
-                self.dialogDel = true;
+                if (self.permissionData.includes("expertDel")) {
+                    self.dialogDel = true;
+                } else {
+                    self.$message.warning("无权操作");
+                }
                 self.id = row.id;
 
             },

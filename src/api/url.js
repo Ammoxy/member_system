@@ -53,9 +53,11 @@ const url = {
 
 	// 用户
 	'WxUser': BaseURL + '/wx/users', // 获取用户列表
+	'UserInfo': BaseURL + '/user/info', // 用户列表
 
 	// 分销管理
 	'HealthUserList': BaseURL + '/health/user/list', // 获取健康专员列表
+	'HealthApplyList': BaseURL + '/health/apply/list', // 获取健康专员申请列表
 	'HealthCheck': BaseURL + '/health/check', // 健康专员审核
 
 	// 专家

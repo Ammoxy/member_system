@@ -233,6 +233,16 @@ API.wxUser = function (currentPage, perPage, user_id, nickname) {
 	})
 }
 
+// 获取用户列表
+API.userInfo = function (currentPage, perPage, name, state) {
+	return axios.get(url.UserInfo, {
+		currentPage: currentPage,
+		perPage: perPage,
+		name: name,
+		state: state
+	})
+}
+
 // 分销管理
 // 审核
 API.healthCheck = function (id, state) {
@@ -242,8 +252,16 @@ API.healthCheck = function (id, state) {
 	})
 }
 // 获取用户列表
-API.healthUserList = function (currentPage, perPage, name, state) {
+API.healthUserList = function (currentPage, perPage, name) {
 	return axios.get(url.HealthUserList, {
+		currentPage: currentPage,
+		perPage: perPage,
+		name: name,
+	})
+}
+
+API.healthApplyList = function (currentPage, perPage, name, state) {
+	return axios.get(url.HealthApplyList, {
 		currentPage: currentPage,
 		perPage: perPage,
 		name: name,

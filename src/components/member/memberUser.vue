@@ -89,10 +89,10 @@
     },
 
     methods: {
-      getUserInfo(cur, list, name, state) {
+      getUserInfo(cur, list, name) {
         var self = this;
         self.loading = true;
-        API.userInfo(cur, list, name, state)
+        API.userInfo(cur, list, name, 2)
           .then((res) => {
             self.loading = false;
             self.tableData = res.result.data;

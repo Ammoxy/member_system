@@ -419,14 +419,14 @@
             changeFetch(val) {
                 console.log(val);
                 if (val == 1) {
-                    self.isYes = true
+                    self.isYes = true;
                 } else {
-                    self.isYes = false
+                    self.isYes = false;
                 }
             },
 
             merchantChange(val) {
-                console.log(val);
+                // console.log(val);
                 var self = this;
                 self.goodsInfo.have_merchant = val;
             },

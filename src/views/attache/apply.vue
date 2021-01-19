@@ -26,12 +26,12 @@
             </el-table-column>
             <el-table-column prop="user.nickname" label="昵称"></el-table-column>
             <el-table-column prop="name" label="姓名"></el-table-column>
-            <el-table-column prop="identity" label="身份证"></el-table-column>
+            <el-table-column prop="identity" label="身份证" width="180px"></el-table-column>
             <el-table-column prop="phone" label="电话"></el-table-column>
             <el-table-column prop="merchant.name" label="部门"></el-table-column>
             <el-table-column prop="address" label="地址"></el-table-column>
             <!-- <el-table-column prop="money" label="总佣金"></el-table-column> -->
-            <!-- <el-table-column prop="state" width="120px" label="审核状态">
+            <el-table-column prop="state" width="120px" label="审核状态">
                 <template slot-scope="scope">
                     <div v-if="scope.row.state == 1">
                         <span>待审核</span>
@@ -43,42 +43,23 @@
                         <span style="color: red">未通过</span>
                     </div>
                 </template>
-            </el-table-column> -->
+            </el-table-column>
 
-            <el-table-column label="操作" width="120px">
+            <el-table-column label="操作" width="250px">
                 <template slot-scope="scope">
-                    <!-- <el-button size="mini" type="primary" v-if="scope.row.state == 1"
-                        @click="handleAudit(scope.$index, scope.row)">审核</el-button> -->
-                    <el-dropdown>
+                    <el-button size="mini" type="primary" @click="handleAudit(scope.$index, scope.row)">通过审核</el-button>
+                    <el-button size="mini" type="danger" @click="handleFailAudit(scope.$index, scope.row)">不通过审核
+                    </el-button>
+                    <!-- <el-dropdown>
                         <el-button type="primary">
                             操作
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </el-button>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>
-                                <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
-                                    详情
-                                </el-button>
-                            </el-dropdown-item>
-                            <el-dropdown-item>
-                                <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
-                                    会员列表
-                                </el-button>
-                            </el-dropdown-item>
-                            <el-dropdown-item>
-                                <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
-                                    订单列表
-                                </el-button>
-                            </el-dropdown-item>
-                            <el-dropdown-item>
-                                <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
-                                    佣金明细
-                                </el-button>
-                            </el-dropdown-item>
-                            <el-dropdown-item>
-                                <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
-                                    金额清零
-                                </el-button>
+                                <el-button size="mini" type="primary" v-if="scope.row.state == 1"
+                                    @click="handleAudit(scope.$index, scope.row)">审核</el-button>
+
                             </el-dropdown-item>
                             <el-dropdown-item>
                                 <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
@@ -86,7 +67,7 @@
                                 </el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>
-                    </el-dropdown>
+                    </el-dropdown> -->
                 </template>
 
             </el-table-column>
@@ -98,19 +79,28 @@
                 layout="sizes, prev, pager, next, jumper" :total="total" @size-change="sizeChange"></el-pagination>
         </div>
 
-        <!-- 审核 -->
-        <!-- <el-dialog :visible.sync="dialogAudit" title="审核" width="20%" align="center">
+        <!-- 审核 通过 -->
+        <el-dialog :visible.sync="dialogAudit" title="审核" width="20%" align="center">
             <div style="font-size: 20px; margin-bottom: 30px">是否通过审核</div>
             <span>
-                <el-button type="primary" @click="toAudit">通过</el-button>
-                <el-button type="danger" @click="unAudit">不通过</el-button>
+                <el-button type="primary" @click="toAudit">确定</el-button>
+                <el-button type="danger" @click="dialogAudit = false">取消</el-button>
             </span>
-        </el-dialog> -->
+        </el-dialog>
+
+        <!-- 审核 不通过 -->
+        <el-dialog :visible.sync="dialogFailAudit" title="审核" width="20%" align="center">
+            <div style="font-size: 20px; margin-bottom: 30px">是否不通过审核</div>
+            <span>
+                <el-button type="primary" @click="unAudit">确定</el-button>
+                <el-button type="danger" @click="dialogFailAudit = false">取消</el-button>
+            </span>
+        </el-dialog>
 
         <!-- 二维码 -->
-        <el-dialog :visible.sync="dialogQRcode" title="二维码" width="50%" align="center">
+        <!-- <el-dialog :visible.sync="dialogQRcode" title="二维码" width="50%" align="center">
             <img :src="qr_code" alt="">
-        </el-dialog>
+        </el-dialog> -->
     </div>
 </template>
 
@@ -130,9 +120,10 @@
                 userId: "", // 搜索用户id
                 nickname: '',
                 dialogAudit: false,
-                dialogQRcode: false,
+                dialogFailAudit: false,
+                // dialogQRcode: false,
                 id: '',
-                qr_code: '',
+                // qr_code: '',
                 keyword: ''
             }
         },
@@ -143,9 +134,9 @@
         },
 
         methods: {
-            getList(currentPage, perPage, name) {
+            getList(currentPage, perPage, name, state) {
                 var self = this;
-                API.healthUserList(currentPage, perPage, name).then(res => {
+                API.healthApplyList(currentPage, perPage, name, state).then(res => {
                     // console.log(res);
                     self.loading = false;
                     self.tableData = res.result.data;
@@ -183,41 +174,64 @@
                 self.getList(self.current, self.size, self.keyword);
             },
 
-            // handleAudit(index, row) {
-            //     var self = this;
-            //     self.dialogAudit = true;
-            //     self.id = row.id;
-            // },
-            // fucAudit(id, state) {
-            //     var self = this;
-            //     API.healthCheck(id, state).then((res) => {
-            //         console.log(res);
-            //         if (res.code = 10000) {
-            //             self.$message.success("审核成功");
-            //             self.getList(self.current, self.size);
-            //             self.dialogAudit = false;
-            //         }
-
-            //     });
-            // },
-            // toAudit() {
-            //     var self = this;
-            //     self.fucAudit(self.id, 2);
-            // },
-            // unAudit() {
-            //     var self = this;
-            //     self.fucAudit(self.id, 3);
-            // },
-
-            handleQRcode(index, row) {
+            handleAudit(index, row) {
                 var self = this;
-                if (row.qr_code) {
-                    self.dialogQRcode = true;
-                    self.qr_code = row.qr_code
+                if (self.permissionData.includes("attacheAudit")) {
+                    if (row.state == 1) {
+                        self.dialogAudit = true;
+                    } else {
+                        self.$message.warning("该用户已审核, 请勿重复操作");
+                    }
                 } else {
-                    self.$message.warning("暂无二维码");
+                    self.$message.warning("无权操作");
+                }
+                self.id = row.id;
+            },
+
+            toAudit() {
+                var self = this;
+                API.healthCheck(self.id, 2).then((res) => {
+                    // console.log(res);
+                    if (res.code = 10000) {
+                        self.$message.success("审核成功");
+                        self.getList(self.current, self.size);
+                        self.dialogAudit = false;
+                    }
+                });
+            },
+            unAudit() {
+                var self = this;
+                API.healthCheck(self.id, 3).then((res) => {
+                    // console.log(res);
+                    if (res.code = 10000) {
+                        self.$message.success("审核成功");
+                        self.getList(self.current, self.size);
+                        self.dialogFailAudit = false;
+                    }
+                });
+            },
+
+            // handleQRcode(index, row) {
+            //     var self = this;
+            //     if (row.qr_code) {
+            //         self.dialogQRcode = true;
+            //         self.qr_code = row.qr_code
+            //     } else {
+            //         self.$message.warning("暂无二维码");
+            //     }
+            // },
+
+            handleFailAudit(index, row) {
+                var self = this;
+                self.id = row.id;
+                console.log(row);
+                if (row.state == 1) {
+                    self.dialogFailAudit = true;
+                } else {
+                    self.$message.warning("该用户已审核, 请勿重复操作");
                 }
             },
+
         }
     }
 </script>
