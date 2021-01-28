@@ -1,5 +1,5 @@
-//  const BaseURL = "https://chu.fengniaotuangou.cn"
-const BaseURL = "http://192.168.0.107"
+ const BaseURL = "https://he.fengniaotuangou.cn"
+// const BaseURL = "http://192.168.0.107"
 
 const url = {
 	// 登录
@@ -15,13 +15,13 @@ const url = {
 	'DelUser': BaseURL + '/user', // 删除用户
 	'ResetPassword': BaseURL + '/reset/password', // 重置密码
 	'HealthUser': BaseURL + '/health/user', // 获取专员列表/编辑
-	
+
 	// 部门管理
 	'Merchants': BaseURL + '/merchant/list', // 获取部门
 	'CreateMerchant': BaseURL + '/creation/merchant', // 新增部门
 	'MerchantsSelect': BaseURL + '/merchant/select/list', // 获取部门选择列表
 	'Areas': BaseURL + '/china/areas', // 获取省市区
-	
+
 	// 资讯管理
 	'Banners': BaseURL + '/banner/list', // 获取轮播图
 	'CreateBanner': BaseURL + '/creation/banner', // 新增轮播图
@@ -59,12 +59,27 @@ const url = {
 	'HealthUserList': BaseURL + '/health/user/list', // 获取健康专员列表
 	'HealthApplyList': BaseURL + '/health/apply/list', // 获取健康专员申请列表
 	'HealthCheck': BaseURL + '/health/check', // 健康专员审核
+	'WithdrawsList': BaseURL + '/withdraws', // 获取健康专员提现列表
+	'WithdrawsCheck': BaseURL + '/withdraw/check', // 审核提现
+	'UnderlingUser': BaseURL + '/underling/user', // 获取下级会员
+	'CommissionSource': BaseURL + '/commission/source', // 获取健康专员佣金来源
+	'MerCommission': BaseURL + '/merchant/commission', // 获取商家佣金来源
+	'MoneyEmpty': BaseURL + '/money/empty', // 余额清0
 
 	// 专家
 	'Specialists': BaseURL + '/specialists', // 专家列表
 	'CreateSpecialists': BaseURL + '/creation/specialist', // 新增专家
 	'DelSpecialist': BaseURL + '/specialist', // 删除专家
-	
+
+	// 订单管理
+	'UserOrder': BaseURL + '/user/orders', // 获取会员订单列表
+	'ShopingpInfo': BaseURL + '/order/shipping/info', // 获取订单收货地址
+	'RecaptionInfo': BaseURL + '/order/recaption/info', // 获取订单到店自提信息
+	'Orders': BaseURL + '/orders', // 获取订单列表
+	'OrdersGoods': BaseURL + '/order/goods', // 获取订单商品
+	'ConfirmShipments': BaseURL + '/confirm/shipments', // 确认收货
+
+
 }
 
 module.exports = url;

@@ -21,7 +21,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否允许到店自取">
-                    <el-radio-group v-model="goodsInfo.is_fetch" @change="changeFetch">
+                    <el-radio-group v-model="goodsInfo.is_fetch" @change="changeFetch" :disabled="isDisabled">
                         <el-radio :label="1">是</el-radio>
                         <el-radio :label="2">否</el-radio>
                     </el-radio-group>
@@ -122,13 +122,18 @@
             <el-table-column prop="freight" label="运费"></el-table-column>
             <el-table-column prop="is_fetch" label="是否到店自取" width="120">
                 <template slot-scope="scope">
+                    <el-switch v-model="scope.row.is_fetch" active-color="#2a9f93"
+                        @change="notifyChange(scope.row.is_fetch, scope.$index, scope.row)">
+                    </el-switch>
+                </template>
+                <!-- <template slot-scope="scope">
                     <div v-if="scope.row.is_fetch == 1">
                         <span>是</span>
                     </div>
                     <div v-if="scope.row.is_fetch == 2">
                         <span>否</span>
                     </div>
-                </template>
+                </template> -->
             </el-table-column>
             <el-table-column prop="on_shelf" label="是否上架">
                 <template slot-scope="scope">
@@ -157,7 +162,27 @@
                 :total="total" @size-change="sizeChange">
             </el-pagination>
         </div>
-
+        
+        <el-dialog :visible.sync="dialogSel" title="可到店自取部门" @close="close" width="85%">
+            <el-form label-width="150px" :model="goodsInfo">
+                <el-form-item label="可以到店自取的部门">
+                    <el-select v-model="goodsInfo.have_merchant" multiple placeholder="请选择部门(可多选)"
+                        @change="merchantChange" style="width: 400px">
+                        <el-option v-for="(item1, index) in merchantList" :key="index" :label="item1.name"
+                            :value="item1.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="运费">
+                    <el-input v-model="goodsInfo.freight"></el-input>
+                </el-form-item>
+                <div class="submit">
+                    <el-form-item>
+                        <el-button type="primary" @click="newMerchants">提交</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-dialog>
     </div>
 </template>
 
@@ -276,7 +301,10 @@
                 keyword: '',
                 fileLists: [],
                 files: [],
-                permissionData: []
+                permissionData: [],
+                is_fetch: true,
+                dialogSel: false,
+                isDisabled: false
             };
         },
         mounted() {
@@ -301,6 +329,9 @@
                     self.loading = false;
                     self.tableData = res.result.data;
                     self.total = res.result.total;
+                    res.result.data.forEach(item => {
+                        item.is_fetch == 1 ? item.is_fetch = true : item.is_fetch = false;
+                    })
                 }).catch(err => {
                     self.loading = false;
                 })
@@ -342,6 +373,7 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
+                self.isDisabled = false;
                 if (self.isYes) {
                     self.goodsInfo = {
                         name: '',
@@ -409,6 +441,7 @@
                         if (res.code == 10000) {
                             self.$message.success("添加成功");
                             self.dialogGood = false;
+                            self.dialogSel = false;
                             self.getList(self.current, self.size);
                         }
                     })
@@ -431,10 +464,95 @@
                 self.goodsInfo.have_merchant = val;
             },
 
+            notifyChange(val, index, row) {
+                var self = this;
+                console.log(row.id);
+                var have_merchant = [];
+                var arr = [];
+                var arr3 = [];
+                self.loading = true;
+                API.userGoodDetail(row.id).then(res => {
+                    res.result.have_merchant.forEach(item => {
+                        have_merchant.push(item.id);
+                    })
+
+                    if (val == true) {
+                        self.goodsInfo = {
+                            name: res.result.name,
+                            intro: res.result.intro,
+                            detail: res.result.detail,
+                            img: res.result.img,
+                            imgs: res.result.imgs,
+                            price: res.result.price,
+                            freight: res.result.freight,
+                            on_shelf: res.result.on_shelf,
+                            is_fetch: 1,
+                            have_merchant: have_merchant,
+                            id: res.result.id,
+                            sales: res.result.sales,
+                            browse: res.result.browse,
+                            sort: res.result.sort,
+                            good_commissions: [{
+                                    type: 1,
+                                    money: res.result.good_commission[0].money,
+                                    id: res.result.good_commission[0].id,
+                                },
+                                {
+                                    type: 2,
+                                    money: res.result.good_commission[1].money,
+                                    id: res.result.good_commission[1].id,
+                                },
+                                {
+                                    type: 3,
+                                    money: res.result.good_commission[2].money,
+                                    id: res.result.good_commission[2].id,
+                                }
+                            ]
+                        }
+                        self.dialogSel = true;
+                    } else {
+                        self.goodsInfo = {
+                            name: res.result.name,
+                            intro: res.result.intro,
+                            detail: res.result.detail,
+                            img: res.result.img,
+                            imgs: res.result.imgs,
+                            price: res.result.price,
+                            freight: res.result.freight,
+                            on_shelf: res.result.on_shelf,
+                            is_fetch: 2,
+                            id: res.result.id,
+                            sales: res.result.sales,
+                            browse: res.result.browse,
+                            sort: res.result.sort,
+                            good_commissions: [{
+                                    type: 1,
+                                    money: res.result.good_commission[0].money,
+                                    id: res.result.good_commission[0].id,
+                                },
+                                {
+                                    type: 2,
+                                    money: res.result.good_commission[1].money,
+                                    id: res.result.good_commission[1].id,
+                                },
+                                {
+                                    type: 3,
+                                    money: res.result.good_commission[2].money,
+                                    id: res.result.good_commission[2].id,
+                                }
+                            ]
+                        }
+                        self.newMerchants();
+                    }
+                })
+
+            },
+
             handleDetail(index, row) {
                 var self = this;
                 self.id = row.id;
-                var have_merchant = []
+                var have_merchant = [];
+                self.isDisabled = true;
                 if (self.permissionData.includes("memberGoodsEdit")) {
                     self.dialogGood = true;
 
@@ -507,33 +625,6 @@
                                         id: res.result.good_commission[2].id,
                                     }
                                 ]
-                            }
-                        } else if (res.result.good_commission.length == 0) {
-                            self.goodsInfo = {
-                                name: res.result.name,
-                                intro: res.result.intro,
-                                detail: res.result.detail,
-                                img: res.result.img,
-                                imgs: res.result.imgs,
-                                price: res.result.price,
-                                freight: res.result.freight,
-                                on_shelf: res.result.on_shelf,
-                                is_fetch: res.result.is_fetch,
-                                have_merchant: have_merchant,
-                                id: res.result.id,
-                                sales: res.result.sales,
-                                browse: res.result.browse,
-                                sort: res.result.sort,
-                                good_commissions: [{
-                                    type: 1,
-                                    money: ''
-                                }, {
-                                    type: 2,
-                                    money: ''
-                                }, {
-                                    type: 3,
-                                    money: ''
-                                }]
                             }
                         }
                         self.fileLists = self.goodsInfo.imgs.map(t => {

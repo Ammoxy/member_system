@@ -103,6 +103,13 @@ const dynamicRouter = [{
 			meta: {
 				title: '健康专员列表'
 			}
+		}, {
+			path: '/withdraw',
+			name: 'withdraw',
+			component: () => import('@/views/attache/withdraw.vue'),
+			meta: {
+				title: '提现申请列表'
+			}
 		}, ]
 	}, {
 		path: '/expert',

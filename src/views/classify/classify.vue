@@ -167,6 +167,7 @@
         mounted() {
             this.getClassify(this.current, this.size);
             this.getClassifyList();
+            this.permissionData = localStorage.getItem("permissions").split(",");
         },
 
         methods: {
@@ -235,7 +236,11 @@
 
             addClassify() {
                 var self = this;
-                self.dialogClassify = true;
+                if (self.permissionData.includes("classifyGoodAdd")) {
+                    self.dialogClassify = true;
+                } else {
+                    self.$message.warning("无权操作");
+                }
                 self.have_img = false;
                 if (self.have_img) {
                     self.classifyInfo = {
@@ -355,7 +360,11 @@
 
             handleEdit(index, row) {
                 var self = this;
-                self.dialogClassify = true;
+                if (self.permissionData.includes("classifyGoodEdit")) {
+                    self.dialogClassify = true;
+                } else {
+                    self.$message.warning("无权操作");
+                }
                 if (row.type == 3) {
                     self.have_img = true;
                     if (Number(row.is_show) == 0) {
@@ -410,7 +419,11 @@
             },
             handleDelete(index, row) {
                 var self = this;
-                self.dialogDel = true;
+                if (self.permissionData.includes("classifyGoodDel")) {
+                    self.dialogClassify = true;
+                } else {
+                    self.$message.warning("无权操作");
+                }
                 self.id = row.id;
             },
             toDel() {

@@ -47,9 +47,11 @@
                 </template>
             </el-table-column> -->
             <el-table-column prop="created_at" label="创建时间"></el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="200px">
                 <template slot-scope="scope">
                     <el-button type="primary" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button size="mini" type="primary" @click="handleSource(scope.$index, scope.row)">
+                        佣金来源</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -115,6 +117,46 @@
                 </div>
             </el-form>
         </el-dialog>
+
+        <!-- 佣金来源 -->
+        <el-dialog title="佣金来源" :visible.sync="dialogRec" width="80%">
+            <el-table :data="recDate" empty-text="暂无数据" border :header-cell-style="{ background: '#f0f0f0' }"
+                max-height="620">
+                <el-table-column prop="id" label="ID"></el-table-column>
+                <el-table-column prop="order.no" label="订单号"></el-table-column>
+                <el-table-column prop="money" label="佣金"></el-table-column>
+                <el-table-column prop="type" label="类型">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.type == 1">
+                            <span>普通订单</span>
+                        </div>
+                        <div v-if="scope.row.type == 2">
+                            <span>会员订单</span>
+                        </div>
+
+                    </template>
+                </el-table-column>
+                <el-table-column prop="state" label="状态">
+                    <template slot-scope="scope">
+                        <div v-if="scope.row.state == 1">
+                            <span>待分佣</span>
+                        </div>
+                        <div v-if="scope.row.state == 2">
+                            <span>已分佣</span>
+                        </div>
+
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column prop="created_at" label="创建时间"></el-table-column> -->
+            </el-table>
+
+            <!-- 分页 -->
+            <div class="block">
+                <el-pagination @current-change="recCurrentChange" :current-page.sync="recCurrent" :page-size="recSize"
+                    layout="sizes, prev, pager, next, jumper" :total="recTotal" @size-change="recSizeChange">
+                </el-pagination>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -166,8 +208,14 @@
                 parentList: [],
                 showMap: false, // 地图显示
                 limit: 10,
-                showUser: false
-
+                showUser: false,
+                dialogRec: false,
+                recDate: [],
+                recCurrent: 1,
+                recSize: 10,
+                recTotal: 0,
+                merchant_id: '',
+                username: localStorage.getItem("username"),
             }
         },
 
@@ -371,14 +419,6 @@
                         id: row.id
                     };
                 }
-                // let urlStr = self.merchantInfo.img.split(",");
-                // urlStr.forEach(item => {
-                //     let obj = new Object();
-                //     obj.url = item;
-                //     self.files.push(obj);
-                // });
-                // self.getCity(self.merchantInfo.province_id);
-                // self.getArea(self.merchantInfo.city_id);
             },
 
             getLoc(mapData) {
@@ -387,6 +427,51 @@
                 this.merchantInfo.latitude = mapData.latlng.lat;
                 this.merchantInfo.address = mapData.poiaddress + mapData.poiname;
                 this.showMap = false;
+            },
+
+            getRec(cur, list, merchant_id) {
+                var self = this;
+                API.merCommission(cur, list, merchant_id).then(res => {
+                    self.$message.success("获取数据成功！");
+                    self.recDate = res.result.data;
+                    self.recTotal = res.result.total;
+                })
+            },
+
+            handleSource(index, row) {
+                var self = this;
+                self.merchant_id = row.id;
+                if (self.permissionData.includes("comSource")) {
+                    self.dialogRec = true;
+                    if (self.username == 'admin') {
+                        self.getRec(self.recCurrent, self.recSize, self.merchant_id)
+                    } else {
+                        self.getRec(self.recCurrent, self.recSize)
+                    }
+                } else {
+                    self.$message.warning("无权操作");
+                }
+
+            },
+
+            recCurrentChange(val) {
+                var self = this;
+                self.recCurrent = val;
+                if (self.username == 'admin') {
+                    self.getRec(val, self.recSize, self.merchant_id);
+                } else {
+                    self.getRec(val, self.recSize);
+                }
+            },
+            recSizeChange(val) {
+                var self = this;
+                self.recSize = val;
+                self.recCurrent = 1;
+                if (self.username == 'admin') {
+                    self.getRec(1, val, self.merchant_id);
+                } else {
+                    self.getRec(1, val);
+                }
             },
 
             // 刷新

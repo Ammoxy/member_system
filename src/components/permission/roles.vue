@@ -31,18 +31,18 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="添加角色" :visible.sync="dialogRole" width="80%" :close-on-click-modal="false">
+    <el-dialog title="添加角色" :visible.sync="dialogRole" width="80%" :close-on-click-modal="false" @close='close'>
       <div class="box">
         <el-form :model="form" label-width="120px">
           <el-form-item label="角色名称">
             <el-input v-model="form.name" placeholder="请输入角色名" :disabled="disabledRole"></el-input>
           </el-form-item>
           <el-form-item label="选择权限">
-            <div v-if="role == 'admin'">
+            <div v-if="isAdmin">
               <el-checkbox v-model="checkAll" @change="AllChange">全选</el-checkbox>
               <div class="permission" style="width: 1000px;">
                 <div class="table">
-                  <div class="th" style="width: 20%;">一级菜单</div>
+                  <div class="th" style="width: 20%;">一级菜单(必选)</div>
                   <div class="th" style="width: 20%;">二级菜单</div>
                   <div class="th" style="width: 60%;">操作</div>
                 </div>
@@ -68,7 +68,6 @@
                     </div>
                     <div class="tb set" style="width: 60%;">
                       <div class="level2">
-                        <el-checkbox label="roleAdd" @change="oneChange" class="permission-span">新增角色</el-checkbox>
                         <el-checkbox label="roleDel" @change="oneChange" class="permission-span">删除角色</el-checkbox>
                         <el-checkbox label="roleEdit" @change="oneChange" class="permission-span">编辑角色</el-checkbox>
                       </div>
@@ -95,8 +94,9 @@
                     <div class="tb tr" style="width: 20%;"></div>
                     <div class="tb set" style="width: 60%;">
                       <div class="level2">
-                        <el-checkbox label="merchantAdd" @change="oneChange" class="permission-span">新增商家</el-checkbox>
-                        <el-checkbox label="merchantEdit" @change="oneChange" class="permission-span">编辑商家</el-checkbox>
+                        <el-checkbox label="merchantAdd" @change="oneChange" class="permission-span">新增部门</el-checkbox>
+                        <el-checkbox label="merchantEdit" @change="oneChange" class="permission-span">编辑部门</el-checkbox>
+                        <el-checkbox label="comSource" @change="oneChange" class="permission-span">佣金来源</el-checkbox>
                       </div>
                     </div>
                   </div>
@@ -116,17 +116,6 @@
                     </div>
                     <div class="tb set" style="width: 60%;"></div>
                   </div>
-                  <!-- <div class="table">
-                    <div class="tb" style="width: 20%;">
-                      <div class="level1">
-                        <el-checkbox label="classify" @change="oneChange">
-                          <span style="font-weight: bold;">分类管理</span>
-                        </el-checkbox>
-                      </div>
-                    </div>
-                    <div class="tb tr" style="width: 20%;"></div>
-                    <div class="tb set" style="width: 60%;"></div>
-                  </div> -->
                   <div class="table">
                     <div class="tb" style="width: 20%;">
                       <div class="level1">
@@ -155,15 +144,18 @@
                     </div>
                     <div class="tb set" style="width: 60%;">
                       <div class="level2">
+                        <el-checkbox label="classifyGoodAdd" @change="oneChange" class="permission-span">新增分类
+                        </el-checkbox>
+                        <el-checkbox label="classifyGoodEdit" @change="oneChange" class="permission-span">编辑
+                        </el-checkbox>
+                        <el-checkbox label="classifyGoodDel" @change="oneChange" class="permission-span">删除分类
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
                         <el-checkbox label="commodityAdd" @change="oneChange" class="permission-span">新增商品
                         </el-checkbox>
                         <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                        <el-checkbox label="classifyEdit" @change="oneChange" class="permission-span">编辑分类</el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="memberGoodsAdd" @change="oneChange" class="permission-span">新增会员商品
-                        </el-checkbox>
-                        <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
+                        <el-checkbox label="classifyEdit" @change="oneChange" class="permission-span">编辑商品分类
                         </el-checkbox>
                       </div>
                       <div class="level2">
@@ -174,7 +166,6 @@
                       <div class="level2">
                         <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
                         <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                        <!-- <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox> -->
                       </div>
                     </div>
                   </div>
@@ -198,7 +189,271 @@
                     </div>
                     <div class="tb set" style="width: 60%;">
                       <div class="level2">
+                        <el-checkbox label="attacheAudit" @change="oneChange" class="permission-span">审核通过
+                        </el-checkbox>
+                        <el-checkbox label="attacheUnAudit" @change="oneChange" class="permission-span">审核不通过
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="underling" @change="oneChange" class="permission-span">下级会员列表
+                        </el-checkbox>
+                        <el-checkbox label="commission" @change="oneChange" class="permission-span">佣金来源
+                        </el-checkbox>
+                        <el-checkbox label="qrcode" @change="oneChange" class="permission-span">查看二维码
+                        </el-checkbox>
+                        <el-checkbox label="emptyMoney" @change="oneChange" class="permission-span">余额清零
+                        </el-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="expert" @change="oneChange">
+                          <span style="font-weight: bold;">专家管理</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;">
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <el-checkbox label="expertEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="expertAdd" @change="oneChange" class="permission-span">添加
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="expertDel" @change="oneChange" class="permission-span">删除
+                        </el-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="member" @change="oneChange">
+                          <span style="font-weight: bold;">会员管理</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;">
+                      <div class="level2">
+                        <el-checkbox label="memberGoods" @change="oneChange" class="permission-span">会员商品列表
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="memberUser" @change="oneChange" class="permission-span">会员列表
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <el-checkbox label="memberGoodsAdd" @change="oneChange" class="permission-span">新增会员商品
+                        </el-checkbox>
+                        <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
+                        </el-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="order" @change="oneChange">
+                          <span style="font-weight: bold;">订单管理</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;">
+                      <div class="level2">
+                        <el-checkbox label="commonOrder" @change="oneChange" class="permission-span">普通订单
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="memberOrder" @change="oneChange" class="permission-span">会员订单
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="expressage" @change="oneChange" class="permission-span">快递设置
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <el-checkbox label="distribution" @change="oneChange" class="permission-span">普通订单配送信息
+                        </el-checkbox>
+                        <el-checkbox label="orderGood" @change="oneChange" class="permission-span">订单商品</el-checkbox>
+                        <el-checkbox label="sendGood" @change="oneChange" class="permission-span">普通订单发货</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="distributionMer" @change="oneChange" class="permission-span">会员订单配送信息
+                        </el-checkbox>
+                        <el-checkbox label="sendGoodMer" @change="oneChange" class="permission-span">会员订单发货
+                        </el-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                </el-checkbox-group>
+              </div>
+            </div>
+            <div v-else>
+              <el-checkbox v-model="checkAll" @change="AllChange">全选</el-checkbox>
+              <div class="permission" style="width: 1000px;">
+                <div class="table">
+                  <div class="th" style="width: 20%;">一级菜单(必选)</div>
+                  <div class="th" style="width: 20%;">二级菜单</div>
+                  <div class="th" style="width: 60%;">操作</div>
+                </div>
+                <el-checkbox-group v-model="form.permissions">
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="permission" @change="oneChange">
+                          <span style="font-weight: bold;">系统设置</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;">
+                      <div class="level2">
+                        <el-checkbox label="roles" @change="oneChange">角色管理</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="manage" @change="oneChange">账号管理</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="healthUser" @change="oneChange">健康专员管理</el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <!-- <el-checkbox label="roleAdd" @change="oneChange" class="permission-span">新增角色</el-checkbox> -->
+                        <el-checkbox label="roleDel" @change="oneChange" class="permission-span">删除角色</el-checkbox>
+                        <el-checkbox label="roleEdit" @change="oneChange" class="permission-span">编辑角色</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="manageAdd" @change="oneChange" class="permission-span">新增账号</el-checkbox>
+                        <el-checkbox label="manageDel" @change="oneChange" class="permission-span">删除账号</el-checkbox>
+                        <el-checkbox label="manageEdit" @change="oneChange" class="permission-span">编辑账号</el-checkbox>
+                        <el-checkbox label="manageResetPwd" @change="oneChange" class="permission-span">重置密码
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="healthUserEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="merchant" @change="oneChange">
+                          <span style="font-weight: bold;">部门管理</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;"></div>
+                    <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <el-checkbox label="merchantAdd" @change="oneChange" class="permission-span">新增部门</el-checkbox>
+                        <el-checkbox label="merchantEdit" @change="oneChange" class="permission-span">编辑部门</el-checkbox>
+                        <el-checkbox label="comSource" @change="oneChange" class="permission-span">佣金来源</el-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="commodity" @change="oneChange">
+                          <span style="font-weight: bold;">商品管理</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;">
+                      <div class="level2">
+                        <el-checkbox label="classify" @change="oneChange" class="permission-span">商品分类
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="commodityList" @change="oneChange" class="permission-span">商品列表
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="keyword" @change="oneChange" class="permission-span">关键字
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="activity" @change="oneChange" class="permission-span">活动
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <el-checkbox label="classifyGoodAdd" @change="oneChange" class="permission-span">新增分类
+                        </el-checkbox>
+                        <el-checkbox label="classifyGoodEdit" @change="oneChange" class="permission-span">编辑
+                        </el-checkbox>
+                        <el-checkbox label="classifyGoodDel" @change="oneChange" class="permission-span">删除分类
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="commodityAdd" @change="oneChange" class="permission-span">新增商品
+                        </el-checkbox>
+                        <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                        <el-checkbox label="classifyEdit" @change="oneChange" class="permission-span">编辑商品分类
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="keywordAdd" @change="oneChange" class="permission-span">新增关键字</el-checkbox>
+                        <el-checkbox label="keywordEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                        <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
+                        <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table">
+                    <div class="tb" style="width: 20%;">
+                      <div class="level1">
+                        <el-checkbox label="user" @change="oneChange">
+                          <span style="font-weight: bold;">分销管理</span>
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb tr" style="width: 20%;">
+                      <div class="level2">
+                        <el-checkbox label="apply" @change="oneChange" class="permission-span">健康专员申请列表
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="attache" @change="oneChange" class="permission-span">健康专员列表
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="withdraw" @change="oneChange" class="permission-span">提现申请列表
+                        </el-checkbox>
+                      </div>
+                    </div>
+                    <div class="tb set" style="width: 60%;">
+                      <div class="level2">
                         <el-checkbox label="attacheAudit" @change="oneChange" class="permission-span">审核
+                        </el-checkbox>
+                        <el-checkbox label="attacheUnAudit" @change="oneChange" class="permission-span">审核不通过
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="underling" @change="oneChange" class="permission-span">下级会员列表
+                        </el-checkbox>
+                        <el-checkbox label="commission" @change="oneChange" class="permission-span">佣金来源
+                        </el-checkbox>
+                        <el-checkbox label="qrcode" @change="oneChange" class="permission-span">查看二维码
+                        </el-checkbox>
+                        <el-checkbox label="emptyMoney" @change="oneChange" class="permission-span">余额清零
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="auditWithdraw" @change="oneChange" class="permission-span">审核提现
                         </el-checkbox>
                       </div>
                     </div>
@@ -250,6 +505,12 @@
                       </div>
                     </div>
                     <div class="tb set" style="width: 60%;">
+                      <div class="level2">
+                        <el-checkbox label="memberGoodsAdd" @change="oneChange" class="permission-span">新增会员商品
+                        </el-checkbox>
+                        <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
+                        </el-checkbox>
+                      </div>
                       <!-- <div class="level2">
                         <el-checkbox label="expertEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
                         <el-checkbox label="expertAdd" @change="oneChange" class="permission-span">添加
@@ -282,114 +543,17 @@
                       </div>
                     </div>
                     <div class="tb set" style="width: 60%;">
-                      <!-- <div class="level2">
-                        <el-checkbox label="expertEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                        <el-checkbox label="expertAdd" @change="oneChange" class="permission-span">添加
-                        </el-checkbox>
-                        <el-checkbox label="expertDel" @change="oneChange" class="permission-span">删除
-                        </el-checkbox>
-                      </div> -->
-                    </div>
-                  </div>
-                </el-checkbox-group>
-              </div>
-            </div>
-            <div v-else>
-              <el-checkbox v-model="checkAll" @change="AllChange">全选</el-checkbox>
-              <div class="permission" style="width: 1000px;">
-                <div class="table">
-                  <div class="th" style="width: 20%;">一级菜单</div>
-                  <div class="th" style="width: 20%;">二级菜单</div>
-                  <div class="th" style="width: 60%;">操作</div>
-                </div>
-                <el-checkbox-group v-model="form.permissions">
-                  <div class="table">
-                    <div class="tb" style="width: 20%;">
-                      <div class="level1">
-                        <el-checkbox label="permission" @change="oneChange">
-                          <span style="font-weight: bold;">权限管理</span>
-                        </el-checkbox>
-                      </div>
-                    </div>
-                    <div class="tb tr" style="width: 20%;">
                       <div class="level2">
-                        <el-checkbox label="roles" @change="oneChange">角色管理</el-checkbox>
+                        <el-checkbox label="distribution" @change="oneChange" class="permission-span">普通订单配送信息
+                        </el-checkbox>
+                        <el-checkbox label="orderGood" @change="oneChange" class="permission-span">订单商品</el-checkbox>
+                        <el-checkbox label="sendGood" @change="oneChange" class="permission-span">普通订单发货</el-checkbox>
                       </div>
                       <div class="level2">
-                        <el-checkbox label="manage" @change="oneChange">账号管理</el-checkbox>
-                      </div>
-                    </div>
-                    <div class="tb set" style="width: 60%;">
-                      <div class="level2">
-                        <el-checkbox label="roleAdd" @change="oneChange" class="permission-span">新增角色</el-checkbox>
-                        <el-checkbox label="roleDel" @change="oneChange" class="permission-span">删除角色</el-checkbox>
-                        <el-checkbox label="roleEdit" @change="oneChange" class="permission-span">编辑角色</el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="manageAdd" @change="oneChange" class="permission-span">新增账号</el-checkbox>
-                        <el-checkbox label="manageDel" @change="oneChange" class="permission-span">删除账号</el-checkbox>
-                        <el-checkbox label="manageEdit" @change="oneChange" class="permission-span">编辑账号</el-checkbox>
-                        <el-checkbox label="manageResetPwd" @change="oneChange" class="permission-span">重置密码
+                        <el-checkbox label="distributionMer" @change="oneChange" class="permission-span">会员订单配送信息
                         </el-checkbox>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="table">
-                    <div class="tb" style="width: 20%;">
-                      <div class="level1">
-                        <el-checkbox label="merchant" @change="oneChange">
-                          <span style="font-weight: bold;">部门管理</span>
+                        <el-checkbox label="sendGoodMer" @change="oneChange" class="permission-span">会员订单发货
                         </el-checkbox>
-                      </div>
-                    </div>
-                    <div class="tb tr" style="width: 20%;"></div>
-                    <div class="tb set" style="width: 60%;">
-                      <div class="level2">
-                        <el-checkbox label="merchantAdd" @change="oneChange" class="permission-span">新增商家</el-checkbox>
-                        <el-checkbox label="merchantEdit" @change="oneChange" class="permission-span">编辑商家</el-checkbox>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="table">
-                    <div class="tb" style="width: 20%;">
-                      <div class="level1">
-                        <el-checkbox label="commodity" @change="oneChange">
-                          <span style="font-weight: bold;">商品管理</span>
-                        </el-checkbox>
-                      </div>
-                    </div>
-                    <div class="tb tr" style="width: 20%;">
-                      <div class="level2">
-                        <el-checkbox label="commodityList" @change="oneChange" class="permission-span">普通商品列表
-                        </el-checkbox>
-                        <el-checkbox label="keyword" @change="oneChange" class="permission-span">关键字
-                        </el-checkbox>
-                        <el-checkbox label="activity" @change="oneChange" class="permission-span">活动
-                        </el-checkbox>
-                      </div>
-                    </div>
-                    <div class="tb set" style="width: 60%;">
-                      <div class="level2">
-                        <el-checkbox label="commodityAdd" @change="oneChange" class="permission-span">新增商品
-                        </el-checkbox>
-                        <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                        <el-checkbox label="classifyEdit" @change="oneChange" class="permission-span">编辑分类</el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="memberGoodsAdd" @change="oneChange" class="permission-span">新增会员商品
-                        </el-checkbox>
-                        <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
-                        </el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="keywordAdd" @change="oneChange" class="permission-span">新增关键字</el-checkbox>
-                        <el-checkbox label="keywordEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                        <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox>
-                      </div>
-                      <div class="level2">
-                        <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
-                        <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                        <!-- <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox> -->
                       </div>
                     </div>
                   </div>
@@ -443,11 +607,11 @@
           "manageDel",
           "manageEdit",
           "manageResetPwd",
-          // "healthUserAdd",
           "healthUserEdit",
           "merchant",
           "merchantAdd",
           "merchantEdit",
+          "comSource",
           "commodity",
           "commodityList",
           "commodityAdd",
@@ -469,6 +633,11 @@
           "attache",
           "apply",
           "attacheAudit",
+          "attacheUnAudit",
+          "underling",
+          "commission",
+          "qrcode",
+          "emptyMoney",
           "expert",
           "expertEdit",
           "expertAdd",
@@ -477,11 +646,20 @@
           "commonOrder",
           "memberOrder",
           "expressage",
+          "distribution",
+          "orderGood",
+          "sendGood",
+          "distributionMer",
+          "sendGoodMer",
 
           "information",
           "banner",
           "message",
-          "classify"
+          "classify",
+          'classifyGoodAdd',
+          'classifyGoodEdit',
+          'classifyGoodDel'
+
         ],
         permissionList: [
           "permission", // 角色管理
@@ -496,11 +674,11 @@
           "manageDel",
           "manageEdit",
           "manageResetPwd",
-          // "healthUserAdd",
           "healthUserEdit",
           "merchant",
           "merchantAdd",
           "merchantEdit",
+          "comSource",
           "commodity",
           "commodityList",
           "commodityAdd",
@@ -520,7 +698,14 @@
           "kactivityEdit",
           "attache",
           "apply",
+          "withdraw",
+          "auditWithdraw",
           "attacheAudit",
+          "attacheUnAudit",
+          "underling",
+          "commission",
+          "qrcode",
+          "emptyMoney",
           "user",
           "expert",
           "expertEdit",
@@ -530,7 +715,15 @@
           "commonOrder",
           "memberOrder",
           "expressage",
-
+          "distribution",
+          "orderGood",
+          "sendGood",
+          "distributionMer",
+          "sendGoodMer",
+          "classify",
+          'classifyGoodAdd',
+          'classifyGoodEdit',
+          'classifyGoodDel',
         ],
 
         dialogDel: false,
@@ -542,6 +735,8 @@
         total: 0,
         role: localStorage.getItem("username"),
         permissionData: [],
+
+        isAdmin: false
       };
     },
     mounted() {
@@ -553,7 +748,6 @@
         var self = this;
         API.roles(cur, list)
           .then((res) => {
-            // console.log(res);
             self.loading = false;
             self.tableData = res.result.data;
             self.total = res.result.total;
@@ -577,40 +771,15 @@
         self.getRoles(1, val);
         self.current = 1;
       },
-
-      // addRole() {
-      //   var self = this;
-      //   if (self.permissionData.includes("roleAdd")) {
-      //     self.dialogRole = true;
-      //   } else {
-      //     self.$message.warning("无权操作");
-      //   }
-      //   self.form = {
-      //     name: "",
-      //     permissions: [],
-      //   };
-      //   self.disabledRole = false;
-      //   self.checkAll = true;
-      //   if (self.checkAll === true) {
-      //     if (localStorage.getItem('username') == 'admin') {
-      //       self.form.permissions = self.checkAll ? self.adminPermission : [];
-      //       console.log(self.form.permissions)
-      //     } else {
-      //       self.form.permissions = self.checkAll ? self.permissionList : [];
-      //       console.log(self.form.permissions)
-      //     }
-      //   }
-      // },
       newRole() {
         var self = this;
-        console.log(self.form);
         if (self.form.name && self.form.permissions.length > 0) {
           API.createRole(self.form).then((res) => {
-            // console.log(res);
             self.dialogRole = false;
             self.$message.success("提交成功");
             self.getRoles(self.current, self.size);
-            // window.location.reload();
+            self.form = {};
+            self.form.permissions = [];
           });
         } else {
           self.$message.warning("请补充完整信息");
@@ -624,36 +793,48 @@
         } else {
           self.$message.warning("无权操作");
         }
+        if (row.type == 0) {
+          self.isAdmin = true;
+          self.checkAll = row.permissions.length >= self.adminPermission.length;
+        } else {
+          self.isAdmin = false;
+          self.checkAll = row.permissions.length >= self.permissionList.length;
+        }
+        console.log(row);
         self.disabledRole = true;
         self.form.title = row.title;
         self.form.name = row.name;
         self.form.id = row.id;
         self.form.permissions = row.permissions;
-        self.checkAll = row.permissions.length >= self.adminPermission.length;
-        // self.checkAll = self.adminPermission.length;
         if (self.checkAll === true) {
-          if (localStorage.getItem('username') == 'admin') {
+          if (self.isAdmin) {
             self.form.permissions = self.checkAll ? self.adminPermission : [];
-            console.log(self.form.permissions)
           } else {
             self.form.permissions = self.checkAll ? self.permissionList : [];
-            console.log(self.form.permissions)
           }
         }
       },
+      close() {
+        var self = this;
+        self.form = {
+          name: "",
+          id: "",
+          permissions: [],
+          title: ''
+        };
+      },
       AllChange(val) {
         var self = this;
-        if (localStorage.getItem("username") == "admin" && self.form.name == "总后台") {
+        console.log(self.isAdmin);
+        if (self.isAdmin) {
           self.form.permissions = val ? self.adminPermission : [];
-          console.log(self.form.permissions);
         } else {
           self.form.permissions = val ? self.permissionList : [];
         }
       },
       oneChange(val) {
         var self = this;
-        console.log(self.form.permissions);
-        if (localStorage.getItem('username') == 'admin') {
+        if (self.isAdmin) {
           self.checkAll = self.form.permissions.length >= self.adminPermission.length;
         } else {
           self.checkAll = self.form.permissions.length >= self.permissionList.length;
@@ -664,10 +845,10 @@
         var self = this;
         if (self.permissionData.includes("roleDel")) {
           self.dialogDel = true;
+          self.id = row.id;
         } else {
           self.$message.warning("无权操作");
         }
-        self.id = row.id;
       },
       toDel() {
         var self = this;
@@ -742,5 +923,9 @@
 
   .permission-span {
     width: 80px;
+  }
+
+  .step {
+    width: 800px;
   }
 </style>

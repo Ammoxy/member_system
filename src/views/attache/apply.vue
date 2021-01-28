@@ -26,6 +26,7 @@
             </el-table-column>
             <el-table-column prop="user.nickname" label="昵称"></el-table-column>
             <el-table-column prop="name" label="姓名"></el-table-column>
+            <el-table-column prop="health_grade.name" label="专员等级"></el-table-column>
             <el-table-column prop="identity" label="身份证" width="180px"></el-table-column>
             <el-table-column prop="phone" label="电话"></el-table-column>
             <el-table-column prop="merchant.name" label="部门"></el-table-column>
@@ -224,12 +225,16 @@
             handleFailAudit(index, row) {
                 var self = this;
                 self.id = row.id;
-                console.log(row);
-                if (row.state == 1) {
-                    self.dialogFailAudit = true;
+                if (self.permissionData.includes("attacheUnAudit")) {
+                    if (row.state == 1) {
+                        self.dialogFailAudit = true;
+                    } else {
+                        self.$message.warning("该用户已审核, 请勿重复操作");
+                    }
                 } else {
-                    self.$message.warning("该用户已审核, 请勿重复操作");
+                    self.$message.warning("无权操作");
                 }
+
             },
 
         }

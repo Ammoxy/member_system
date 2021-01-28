@@ -259,13 +259,60 @@ API.healthUserList = function (currentPage, perPage, name) {
 		name: name,
 	})
 }
-
+// 申请列表
 API.healthApplyList = function (currentPage, perPage, name, state) {
 	return axios.get(url.HealthApplyList, {
 		currentPage: currentPage,
 		perPage: perPage,
 		name: name,
 		state: state
+	})
+}
+// 提现申请列表
+API.withdrawsList = function (currentPage, perPage, name, state) {
+	return axios.get(url.WithdrawsList, {
+		currentPage: currentPage,
+		perPage: perPage,
+		name: name,
+		state: state
+	})
+}
+// 审核提现申请
+API.withdrawsCheck = function (id, state, remark) {
+	return axios.post(url.WithdrawsCheck, {
+		id: id,
+		state: state,
+		remark: remark
+	})
+}
+// 获取下级会员
+API.underlingUser = function (currentPage, perPage, user_id) {
+	return axios.get(url.UnderlingUser, {
+		currentPage: currentPage,
+		perPage: perPage,
+		user_id: user_id
+	})
+}
+// 获取健康专员佣金来源
+API.commissionSource = function (currentPage, perPage, user_id) {
+	return axios.get(url.CommissionSource, {
+		currentPage: currentPage,
+		perPage: perPage,
+		user_id: user_id
+	})
+}
+// 获取商家佣金来源
+API.merCommission = function (currentPage, perPage, merchant_id) {
+	return axios.get(url.MerCommission, {
+		currentPage: currentPage,
+		perPage: perPage,
+		merchant_id: merchant_id
+	})
+}
+// 余额清0
+API.moneyEmpty = function (user_id) {
+	return axios.post(url.MoneyEmpty, {
+		user_id: user_id
 	})
 }
 
@@ -285,6 +332,55 @@ API.specialists = function (currentPage, perPage, name) {
 API.delSpecialist = function (id) {
 	return axios.del(url.DelSpecialist, {
 		id: id
+	})
+}
+
+// 订单管理
+// 会员订单列表
+API.userOrder = function (currentPage, perPage, status, no, good_id) {
+	return axios.get(url.UserOrder, {
+		currentPage: currentPage,
+		perPage: perPage,
+		status: status,
+		no: no,
+		good_id: good_id
+	})
+}
+// 获取订单收货地址
+API.shopingpInfo = function (order_id, type) {
+	return axios.get(url.ShopingpInfo, {
+		order_id: order_id,
+		type: type
+	})
+}
+// 获取订单到店自提信息
+API.recaptionInfo = function (order_id, type) {
+	return axios.get(url.RecaptionInfo, {
+		order_id: order_id,
+		type: type
+	})
+}
+// 订单列表
+API.orders = function (currentPage, perPage, status, no, good_id) {
+	return axios.get(url.Orders, {
+		currentPage: currentPage,
+		perPage: perPage,
+		status: status,
+		no: no,
+		good_id: good_id
+	})
+}
+// 获取订单商品
+API.ordersGoods = function (order_id) {
+	return axios.get(url.OrdersGoods, {
+		order_id: order_id
+	})
+}
+// 确认收货
+API.confirmShipments = function (order_id, type) {
+	return axios.post(url.ConfirmShipments, {
+		order_id: order_id,
+		type: type
 	})
 }
 

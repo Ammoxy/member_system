@@ -21,14 +21,14 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否允许到店自取">
-                    <el-radio-group v-model="goodsInfo.is_fetch" @change="changeFetch">
+                    <el-radio-group v-model="goodsInfo.is_fetch" @change="changeFetch" :disabled="isDisabled">
                         <el-radio :label="1">是</el-radio>
                         <el-radio :label="2">否</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="可以到店自取的部门" v-if="goodsInfo.is_fetch == 1">
                     <el-select v-model="goodsInfo.have_merchant" multiple placeholder="请选择部门(可多选)"
-                        @change="merchantChange" style="width: 400px">
+                        @change="merchantChange" style="width: 400px" :disabled="isDisabled">
                         <el-option v-for="(item1, index) in merchantList" :key="index" :label="item1.name"
                             :value="item1.id">
                         </el-option>
@@ -155,13 +155,18 @@
             <el-table-column prop="freight" label="运费"></el-table-column>
             <el-table-column prop="is_fetch" label="是否到店自取" width="120">
                 <template slot-scope="scope">
+                    <el-switch v-model="scope.row.is_fetch" active-color="#2a9f93"
+                        @change="notifyChange(scope.row.is_fetch, scope.$index, scope.row)">
+                    </el-switch>
+                </template>
+                <!-- <template slot-scope="scope">
                     <div v-if="scope.row.is_fetch == 1">
                         <span>是</span>
                     </div>
                     <div v-if="scope.row.is_fetch == 2">
                         <span>否</span>
                     </div>
-                </template>
+                </template> -->
             </el-table-column>
             <el-table-column prop="on_shelf" label="是否上架">
                 <template slot-scope="scope">
@@ -196,7 +201,6 @@
         <el-dialog :visible.sync="dialogClassify" title="编辑商品分类" @close="close" width="85%">
             <el-form label-width="150px" :model="goodsInfo">
                 <div class="momey-info">
-
                     <el-card class="box-card">
                         <div slot="header" class="clearfix">
                             <span>商品原分类</span>
@@ -230,6 +234,27 @@
                     </el-form-item>
                 </div>
 
+                <div class="submit">
+                    <el-form-item>
+                        <el-button type="primary" @click="newMerchants">提交</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-dialog>
+
+        <el-dialog :visible.sync="dialogSel" title="可到店自取部门" @close="close" width="85%">
+            <el-form label-width="150px" :model="goodsInfo">
+                <el-form-item label="可以到店自取的部门">
+                    <el-select v-model="goodsInfo.have_merchant" multiple placeholder="请选择部门(可多选)"
+                        @change="merchantChange" style="width: 400px">
+                        <el-option v-for="(item1, index) in merchantList" :key="index" :label="item1.name"
+                            :value="item1.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="运费">
+                    <el-input v-model="goodsInfo.freight"></el-input>
+                </el-form-item>
                 <div class="submit">
                     <el-form-item>
                         <el-button type="primary" @click="newMerchants">提交</el-button>
@@ -374,7 +399,9 @@
                 dialogClassify: false,
                 oldFirstName: '', // 已存在的分类数据
                 oldSecondName: '',
-                oldThirdName: []
+                oldThirdName: [],
+                is_fetch: true,
+                dialogSel: false,
             };
         },
         mounted() {
@@ -399,6 +426,9 @@
                     self.loading = false;
                     self.tableData = res.result.data;
                     self.total = res.result.total;
+                    res.result.data.forEach(item => {
+                        item.is_fetch == 1 ? item.is_fetch = true : item.is_fetch = false;
+                    })
                 }).catch(err => {
                     self.loading = false;
                 })
@@ -481,7 +511,6 @@
                         imgs: [],
                         price: '',
                         vip_price: '',
-                        freight: '',
                         on_shelf: 1,
                         is_fetch: 1,
                         repertory: '',
@@ -515,22 +544,25 @@
                 self.typeArr = [];
                 self.firstName = '';
                 self.secondName = '';
-                self.thirdName = []
+                self.thirdName = [];
+                self.oldFirstName = ''; // 已存在的分类数据
+                self.oldSecondName = '';
+                self.oldThirdName = [];
             },
 
             newMerchants() {
                 var self = this;
-                self.goodsInfo.classify_id.push.apply(self.goodsInfo.classify_id, self.typeArr);
-                console.log(self.goodsInfo.classify_id);
                 if (self.goodsInfo.name && self.goodsInfo.intro && self.goodsInfo.share_title && self.goodsInfo
                     .img && self.goodsInfo.imgs && self.goodsInfo.price && self.goodsInfo.vip_price && self
-                    .goodsInfo.repertory && self.goodsInfo.classify_id && self.goodsInfo.good_commissions) {
+                    .goodsInfo.repertory && self.goodsInfo.classify_id && self.goodsInfo.good_commissions && self
+                    .typeArr.length < 3) {
+                    self.goodsInfo.classify_id.push.apply(self.goodsInfo.classify_id, self.typeArr);
                     API.createGoods(self.goodsInfo).then(res => {
                         if (res.code == 10000) {
                             self.$message.success("添加成功");
                             self.dialogGood = false;
                             self.dialogClassify = false;
-                            // self.goodsInfo = {};
+                            self.dialogSel = false;
                             self.getList(self.current, self.size);
                         }
                     })
@@ -568,12 +600,123 @@
             threeTypeChange(val) {
                 var self = this;
                 self.goodsInfo.classify_id = val;
-                // console.log(111, self.goodsInfo.classify_id);
             },
 
             merchantChange(val) {
                 var self = this;
                 self.goodsInfo.have_merchant = val;
+            },
+
+            notifyChange(val, index, row) {
+                var self = this;
+                console.log(row.id);
+                var have_merchant = [];
+                var arr = [];
+                var arr3 = [];
+                self.loading = true;
+                API.goodDetail(row.id).then(res => {
+                    res.result.have_merchant.forEach(item => {
+                        have_merchant.push(item.id);
+                    })
+                    res.result.classify.forEach(item => {
+                        arr.push(item.id);
+                        arr.push(item.subs[0].id);
+
+                        API.seleClassify(2, item.id).then(res => {
+                            self.twoType = res.result;
+                        })
+                        if (item.subs) {
+                            API.seleClassify(3, item.subs[0].id).then(res => {
+                                self.threeType = res.result;
+                            })
+                            if (item.subs[0].subs) {
+                                item.subs[0].subs.forEach(item1 => {
+                                    arr.push(item1.id)
+                                    arr3.push(item1.id);
+
+                                })
+                            }
+                        }
+                    })
+
+                    if (val == true) {
+                        self.goodsInfo = {
+                            name: res.result.name,
+                            intro: res.result.intro,
+                            share_title: res.result.share_title,
+                            detail: res.result.detail,
+                            img: res.result.img,
+                            imgs: res.result.imgs,
+                            price: res.result.price,
+                            vip_price: res.result.vip_price,
+                            freight: res.result.freight,
+                            on_shelf: res.result.on_shelf,
+                            is_fetch: 1,
+                            have_merchant: have_merchant,
+                            repertory: res.result.repertory,
+                            id: res.result.id,
+                            sales: res.result.sales,
+                            browse: res.result.browse,
+                            classify_id: arr,
+                            sort: res.result.sort,
+                            good_commissions: [{
+                                    type: 1,
+                                    money: res.result.good_commission[0].money,
+                                    id: res.result.good_commission[0].id,
+                                },
+                                {
+                                    type: 2,
+                                    money: res.result.good_commission[1].money,
+                                    id: res.result.good_commission[1].id,
+                                },
+                                {
+                                    type: 3,
+                                    money: res.result.good_commission[2].money,
+                                    id: res.result.good_commission[2].id,
+                                }
+                            ]
+                        }
+                        self.dialogSel = true;
+                    } else {
+                        self.goodsInfo = {
+                            name: res.result.name,
+                            intro: res.result.intro,
+                            share_title: res.result.share_title,
+                            detail: res.result.detail,
+                            img: res.result.img,
+                            imgs: res.result.imgs,
+                            price: res.result.price,
+                            vip_price: res.result.vip_price,
+                            freight: res.result.freight,
+                            on_shelf: res.result.on_shelf,
+                            is_fetch: 2,
+                            repertory: res.result.repertory,
+                            id: res.result.id,
+                            sales: res.result.sales,
+                            browse: res.result.browse,
+                            classify_id: arr,
+                            sort: res.result.sort,
+                            good_commissions: [{
+                                    type: 1,
+                                    money: res.result.good_commission[0].money,
+                                    id: res.result.good_commission[0].id,
+                                },
+                                {
+                                    type: 2,
+                                    money: res.result.good_commission[1].money,
+                                    id: res.result.good_commission[1].id,
+                                },
+                                {
+                                    type: 3,
+                                    money: res.result.good_commission[2].money,
+                                    id: res.result.good_commission[2].id,
+                                }
+                            ]
+                        }
+                        self.newMerchants();
+                    }
+                })
+
             },
 
             changeFetch(val) {
@@ -596,10 +739,19 @@
                 if (self.permissionData.includes("commodityEdit")) {
                     self.dialogGood = true;
                     API.goodDetail(self.id).then(res => {
+                        if (res.result.classify[0]) {
+                            arr.push(res.result.classify[0].id);
+                            if (res.result.classify[0].subs) {
+                                arr.push(res.result.classify[0].subs[0].id);
+                                if (res.result.classify[0].subs[0].subs) {
+                                    res.result.classify[0].subs[0].subs.forEach(item => {
+                                        arr.push(item.id);
+                                        arr3.push(item.id);
+                                    })
+                                }
+                            }
+                        }
                         res.result.classify.forEach(item => {
-                            arr.push(item.id);
-                            arr.push(item.subs[0].id);
-
                             API.seleClassify(2, item.id).then(res => {
                                 self.twoType = res.result;
                             })
@@ -607,21 +759,16 @@
                                 API.seleClassify(3, item.subs[0].id).then(res => {
                                     self.threeType = res.result;
                                 })
-                                if (item.subs[0].subs) {
-                                    item.subs[0].subs.forEach(item1 => {
-                                        arr.push(item1.id)
-                                        arr3.push(item1.id);
-
-                                    })
-                                }
                             }
                         })
-                        self.firstName = res.result.classify[0].id;
-                        self.secondName = res.result.classify[0].subs[0].id;
 
-                        // res.result.classify[0].subs[0].subs.forEach(item2 => {})
+                        if (res.result.classify[0]) {
+                            self.firstName = res.result.classify[0].id;
+                            if (res.result.classify[0].subs) {
+                                self.secondName = res.result.classify[0].subs[0].id;
+                            }
+                        }
                         self.thirdName = arr3;
-
                         res.result.have_merchant.forEach(item => {
                             have_merchant.push(item.id);
                         })
@@ -672,8 +819,8 @@
                                 imgs: res.result.imgs,
                                 price: res.result.price,
                                 vip_price: res.result.vip_price,
-                                freight: res.result.freight,
                                 on_shelf: res.result.on_shelf,
+                                freight: res.result.freight,
                                 is_fetch: res.result.is_fetch,
                                 repertory: res.result.repertory,
                                 id: res.result.id,
@@ -697,36 +844,6 @@
                                         id: res.result.good_commission[2].id,
                                     }
                                 ]
-                            }
-                        } else if (res.result.good_commission.length == 0) {
-                            self.goodsInfo = {
-                                name: res.result.name,
-                                intro: res.result.intro,
-                                share_title: res.result.share_title,
-                                detail: res.result.detail,
-                                img: res.result.img,
-                                imgs: res.result.imgs,
-                                price: res.result.price,
-                                vip_price: res.result.vip_price,
-                                freight: res.result.freight,
-                                on_shelf: res.result.on_shelf,
-                                is_fetch: res.result.is_fetch,
-                                have_merchant: have_merchant,
-                                id: res.result.id,
-                                sales: res.result.sales,
-                                browse: res.result.browse,
-                                classify_id: arr,
-                                sort: res.result.sort,
-                                good_commissions: [{
-                                    type: 1,
-                                    money: ''
-                                }, {
-                                    type: 2,
-                                    money: ''
-                                }, {
-                                    type: 3,
-                                    money: ''
-                                }]
                             }
                         }
                         self.fileLists = self.goodsInfo.imgs.map(t => {
@@ -748,22 +865,22 @@
             },
             handleClassify(index, row) {
                 var self = this;
-                var arr = [];
                 var have_merchant = [];
                 self.id = row.id;
                 if (self.permissionData.includes("classifyEdit")) {
                     self.dialogClassify = true;
                     API.goodDetail(self.id).then(res => {
-                        self.oldFirstName = res.result.classify[0].name;
-                        self.oldSecondName = res.result.classify[0].subs[0].name;
-                        if (res.result.classify[0].subs[0].subs) {
-                            res.result.classify[0].subs[0].subs.forEach(item => {
-                                arr.push(item.name);
-                            })
+                        if (res.result.classify[0]) {
+                            self.oldFirstName = res.result.classify[0].name;
+                            if (res.result.classify[0].subs) {
+                                self.oldSecondName = res.result.classify[0].subs[0].name;
+                                if (res.result.classify[0].subs[0].subs) {
+                                    res.result.classify[0].subs[0].subs.forEach(item => {
+                                        self.oldThirdName.push(item.name);
+                                    })
+                                }
+                            }
                         }
-                        self.oldThirdName = arr;
-                        // console.log(arr);
-
                         res.result.have_merchant.forEach(item => {
                             have_merchant.push(item.id);
                         })
@@ -785,7 +902,6 @@
                                 id: res.result.id,
                                 sales: res.result.sales,
                                 browse: res.result.browse,
-                                classify_id: arr,
                                 sort: res.result.sort,
                                 good_commissions: [{
                                         type: 1,
@@ -821,7 +937,6 @@
                                 id: res.result.id,
                                 sales: res.result.sales,
                                 browse: res.result.browse,
-                                classify_id: arr,
                                 sort: res.result.sort,
                                 good_commissions: [{
                                         type: 1,
@@ -840,36 +955,6 @@
                                     }
                                 ]
                             }
-                        } else if (res.result.good_commission.length == 0) {
-                            self.goodsInfo = {
-                                name: res.result.name,
-                                intro: res.result.intro,
-                                share_title: res.result.share_title,
-                                detail: res.result.detail,
-                                img: res.result.img,
-                                imgs: res.result.imgs,
-                                price: res.result.price,
-                                vip_price: res.result.vip_price,
-                                freight: res.result.freight,
-                                on_shelf: res.result.on_shelf,
-                                is_fetch: res.result.is_fetch,
-                                have_merchant: have_merchant,
-                                id: res.result.id,
-                                sales: res.result.sales,
-                                browse: res.result.browse,
-                                classify_id: arr,
-                                sort: res.result.sort,
-                                good_commissions: [{
-                                    type: 1,
-                                    money: ''
-                                }, {
-                                    type: 2,
-                                    money: ''
-                                }, {
-                                    type: 3,
-                                    money: ''
-                                }]
-                            }
                         }
                         self.fileLists = self.goodsInfo.imgs.map(t => {
                             var obj = {};
@@ -884,6 +969,7 @@
                             self.files.push(obj);
                         });
                     })
+
                 } else {
                     self.$message.warning("无权操作");
                 }

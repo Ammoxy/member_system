@@ -204,17 +204,17 @@
         var self = this;
         if (self.permissionData.includes("manageAdd")) {
           self.dialogUser = true;
+          self.form = {
+            id: "",
+            username: "",
+            password: "",
+            enable: "",
+            role: "",
+            merchant_id: ''
+          };
         } else {
           self.$message.warning("无权操作");
         }
-        self.form = {
-          id: "",
-          username: "",
-          password: "",
-          enable: "",
-          role: "",
-          merchant_id: ''
-        };
       },
       newUser() {
         var self = this;
