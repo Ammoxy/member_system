@@ -2,10 +2,13 @@
     <div v-loading="loading" element-loading-text="拼命加载中">
         <div class="handle-box">
             <div class="btn">
-                <el-input placeholder="请输入用户名称" v-model="name" @keyup.enter.native="search(name)"
-                    class="input-with-select">
-                    <el-button slot="append" icon="el-icon-search" @click="search(name)"></el-button>
-                </el-input>
+                <!-- <span>分类:</span> -->
+                <el-select v-model="orderStatus" placeholder="请选择订单状态">
+                    <el-option v-for="item in statusList" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+                <el-button slot="append" icon="el-icon-refresh" @click="refresh"></el-button>
             </div>
         </div>
         <el-table :data="tableData" border :header-cell-style="{ background: '#f0f0f0' }" max-height="620">
@@ -196,6 +199,8 @@
     import API from "@/api/index.js";
 
     export default {
+        inject: ["reload"],
+
         data() {
             return {
                 loading: true,
@@ -219,6 +224,29 @@
                 // orderSize: 10,
 
                 dialogShipments: false,
+
+                orderStatus: '',
+                statusList: [{
+                        value: 1,
+                        label: "待支付",
+                    },
+                    {
+                        value: 2,
+                        label: "待发货",
+                    },
+                    {
+                        value: 3,
+                        label: "待收货",
+                    },
+                    {
+                        value: 4,
+                        label: "已收货",
+                    },
+                    {
+                        value: 5,
+                        label: "取消",
+                    },
+                ]
             }
         },
 
@@ -268,7 +296,23 @@
                 var self = this;
                 self.loading = true;
                 self.current = 1;
-                // self.getOrderList(self.current, self.size, self.name);
+                switch (self.orderStatus) {
+                    case 1:
+                        self.getOrderList(self.current, self.size, self.orderStatus);
+                        break;
+                    case 2:
+                        self.getOrderList(self.current, self.size, self.orderStatus);
+                        break;
+                    case 3:
+                        self.getOrderList(self.current, self.size, self.orderStatus);
+                        break;
+                    case 4:
+                        self.getOrderList(self.current, self.size, self.orderStatus);
+                        break;
+                    case 5:
+                        self.getOrderList(self.current, self.size, self.orderStatus);
+                        break;
+                }
             },
 
             handleDetail(index, row) {
@@ -334,6 +378,11 @@
                     self.dialogShipments = false;
                     self.getOrderList(self.current, self.size);
                 })
+            },
+
+            // 刷新
+            refresh() {
+                this.reload();
             },
 
         },

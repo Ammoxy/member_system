@@ -212,7 +212,7 @@
 
             changeClassify() {
                 var self = this;
-                console.log(self.classifyState);
+                // console.log(self.classifyState);
                 switch (self.classifyState) {
                     case 1:
                         self.state = 1;
