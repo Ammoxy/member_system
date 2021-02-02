@@ -40,7 +40,7 @@
           <el-form-item label="选择权限">
             <div v-if="isAdmin">
               <el-checkbox v-model="checkAll" @change="AllChange">全选</el-checkbox>
-              <div class="permission" style="width: 1000px;">
+              <div class="permission" style="width: 1200px;">
                 <div class="table">
                   <div class="th" style="width: 20%;">一级菜单(必选)</div>
                   <div class="th" style="width: 20%;">二级菜单</div>
@@ -299,7 +299,7 @@
             </div>
             <div v-else>
               <el-checkbox v-model="checkAll" @change="AllChange">全选</el-checkbox>
-              <div class="permission" style="width: 1000px;">
+              <div class="permission" style="width: 1200px;">
                 <div class="table">
                   <div class="th" style="width: 20%;">一级菜单(必选)</div>
                   <div class="th" style="width: 20%;">二级菜单</div>

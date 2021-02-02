@@ -2,9 +2,16 @@
     <div v-loading="loading" element-loading-text="拼命加载中">
         <div class="handle-box">
             <div class="btn">
-                <el-input placeholder="请输入用户名称" v-model="name" @keyup.enter.native="search(name)"
-                    class="input-with-select">
-                    <el-button slot="append" icon="el-icon-search" @click="search(name)"></el-button>
+                <el-select v-model="orderStatus" placeholder="请选择订单状态" @change="stateChange">
+                    <el-option v-for="item in statusList" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="btn">
+                <el-input v-model="keyword" placeholder="请输入订单号" class="input-with-select"
+                    @keyup.enter.native="search(keyword)">
+                    <el-button slot="append" icon="el-icon-search" @click="search(keyword)"></el-button>
+                    <el-button slot="append" icon="el-icon-refresh" @click="refresh"></el-button>
                 </el-input>
             </div>
         </div>
@@ -164,6 +171,8 @@
     import API from "@/api/index.js";
 
     export default {
+        inject: ["reload"],
+
         data() {
             return {
                 loading: true,
@@ -185,6 +194,34 @@
                 // orderSize: 10,
 
                 dialogShipments: false,
+
+                orderStatus: '',
+                statusList: [{
+                        value: 0,
+                        label: '全部'
+                    }, {
+                        value: 1,
+                        label: "待支付",
+                    },
+                    {
+                        value: 2,
+                        label: "待发货",
+                    },
+                    {
+                        value: 3,
+                        label: "待收货",
+                    },
+                    {
+                        value: 4,
+                        label: "已收货",
+                    },
+                    {
+                        value: 5,
+                        label: "取消",
+                    },
+                ],
+
+                keyword: '',
 
             }
         },
@@ -213,8 +250,10 @@
                 var self = this;
                 self.current = val;
                 self.loading = true;
-                if (self.name) {
-                    self.getOrderList(val, self.size, self.name);
+                if (self.orderStatus) {
+                    self.getOrderList(val, self.size, self.orderStatus);
+                } else if (self.keyword) {
+                    self.getOrderList(val, self.size, self.orderStatus, self.keyword);
                 } else {
                     self.getOrderList(val, self.size);
                 }
@@ -223,19 +262,34 @@
                 var self = this;
                 self.size = val;
                 self.loading = true;
-                if (self.name) {
-                    self.getOrderList(1, val, self.name);
+                self.current = 1;
+                if (self.orderStatus) {
+                    self.getOrderList(1, val, self.orderStatus);
+                } else if (self.keyword) {
+                    self.getOrderList(1, val, self.orderStatus, self.keyword);
                 } else {
                     self.getOrderList(1, val);
                 }
+            },
+
+            stateChange(val) {
+                var self = this;
+                self.loading = true;
                 self.current = 1;
+                self.keyword = ''
+                if (self.orderStatus == 0) {
+                    self.getOrderList(self.current, self.size);
+                } else {
+                    self.getOrderList(self.current, self.size, self.orderStatus);
+                }
             },
 
             search() {
                 var self = this;
                 self.loading = true;
                 self.current = 1;
-                // self.getOrderList(self.current, self.size, self.name);
+                self.orderStatus = ''
+                self.getOrderList(self.current, self.size, self.orderStatus, self.keyword);
             },
 
             handleDetail(index, row) {
@@ -245,36 +299,27 @@
                 if (self.permissionData.includes("sendGoodMer")) {
                     self.dialogOrder = true;
                     if (row.is_fetch == 1) {
-                    API.shopingpInfo(self.order_id, 2).then(res => {
-                        console.log(self.orderData);
-                        self.orderData = res.result;
-                        self.$message.success("获取数据成功");
-                    })
-                } else if (row.is_fetch == 2) {
-                    API.recaptionInfo(self.order_id, 2).then(res => {
-                        self.orderData = res.result;
-                        self.merchant_name = res.result.merchant.name;
-                        self.merchant_address = res.result.merchant.address
-                        console.log(self.orderData.merchant.name);
+                        API.shopingpInfo(self.order_id, 2).then(res => {
+                            console.log(self.orderData);
+                            self.orderData = res.result;
+                            self.$message.success("获取数据成功");
+                        })
+                    } else if (row.is_fetch == 2) {
+                        API.recaptionInfo(self.order_id, 2).then(res => {
+                            self.orderData = res.result;
+                            self.merchant_name = res.result.merchant.name;
+                            self.merchant_address = res.result.merchant.address
+                            console.log(self.orderData.merchant.name);
 
-                        self.$message.success("获取数据成功");
-                    })
-                }
+                            self.$message.success("获取数据成功");
+                        })
+                    }
                 } else {
                     self.$message.warning("无权操作");
                 }
-                
-            },
-            // orderCurrentChange(val) {
-            //     var self = this;
-            //     self.orderCurrent = val;
-            // },
-            // orderSizeChange(val) {
-            //     var self = this;
-            //     self.orderSize = val;
-            //     self.orderCurrent = 1;
 
-            // },
+            },
+
 
             handleShipments(index, row) {
                 var self = this;
@@ -298,6 +343,11 @@
                     self.dialogShipments = false;
                     self.getOrderList(self.current, self.size);
                 })
+            },
+
+            // 刷新
+            refresh() {
+                this.reload();
             },
 
         },

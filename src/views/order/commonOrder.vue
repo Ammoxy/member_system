@@ -2,13 +2,17 @@
     <div v-loading="loading" element-loading-text="拼命加载中">
         <div class="handle-box">
             <div class="btn">
-                <!-- <span>分类:</span> -->
-                <el-select v-model="orderStatus" placeholder="请选择订单状态">
+                <el-select v-model="orderStatus" placeholder="请选择订单状态" @change="stateChange">
                     <el-option v-for="item in statusList" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
-                <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
-                <el-button slot="append" icon="el-icon-refresh" @click="refresh"></el-button>
+            </div>
+            <div class="btn">
+                <el-input v-model="keyword" placeholder="请输入订单号" class="input-with-select"
+                    @keyup.enter.native="search(keyword)">
+                    <el-button slot="append" icon="el-icon-search" @click="search(keyword)"></el-button>
+                    <el-button slot="append" icon="el-icon-refresh" @click="refresh"></el-button>
+                </el-input>
             </div>
         </div>
         <el-table :data="tableData" border :header-cell-style="{ background: '#f0f0f0' }" max-height="620">
@@ -227,6 +231,9 @@
 
                 orderStatus: '',
                 statusList: [{
+                        value: 0,
+                        label: '全部'
+                    }, {
                         value: 1,
                         label: "待支付",
                     },
@@ -246,7 +253,9 @@
                         value: 5,
                         label: "取消",
                     },
-                ]
+                ],
+
+                keyword: '',
             }
         },
 
@@ -274,8 +283,10 @@
                 var self = this;
                 self.current = val;
                 self.loading = true;
-                if (self.name) {
-                    self.getOrderList(val, self.size, self.name);
+                if (self.orderStatus) {
+                    self.getOrderList(val, self.size, self.orderStatus);
+                } else if (self.keyword) {
+                    self.getOrderList(val, self.size, self.orderStatus, self.keyword);
                 } else {
                     self.getOrderList(val, self.size);
                 }
@@ -284,35 +295,34 @@
                 var self = this;
                 self.size = val;
                 self.loading = true;
-                if (self.name) {
-                    self.getOrderList(1, val, self.name);
+                self.current = 1;
+                if (self.orderStatus) {
+                    self.getOrderList(1, val, self.orderStatus);
+                } else if (self.keyword) {
+                    self.getOrderList(1, val, self.orderStatus, self.keyword);
                 } else {
                     self.getOrderList(1, val);
                 }
+            },
+
+            stateChange(val) {
+                var self = this;
+                self.loading = true;
                 self.current = 1;
+                self.keyword = ''
+                if (self.orderStatus == 0) {
+                    self.getOrderList(self.current, self.size);
+                } else {
+                    self.getOrderList(self.current, self.size, self.orderStatus);
+                }
             },
 
             search() {
                 var self = this;
                 self.loading = true;
                 self.current = 1;
-                switch (self.orderStatus) {
-                    case 1:
-                        self.getOrderList(self.current, self.size, self.orderStatus);
-                        break;
-                    case 2:
-                        self.getOrderList(self.current, self.size, self.orderStatus);
-                        break;
-                    case 3:
-                        self.getOrderList(self.current, self.size, self.orderStatus);
-                        break;
-                    case 4:
-                        self.getOrderList(self.current, self.size, self.orderStatus);
-                        break;
-                    case 5:
-                        self.getOrderList(self.current, self.size, self.orderStatus);
-                        break;
-                }
+                self.orderStatus = ''
+                self.getOrderList(self.current, self.size, self.orderStatus, self.keyword);
             },
 
             handleDetail(index, row) {
