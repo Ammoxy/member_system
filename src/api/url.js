@@ -1,5 +1,5 @@
  const BaseURL = "https://he.fengniaotuangou.cn"
-// const BaseURL = "http://192.168.0.107"
+// const BaseURL = "http://192.168.0.110"
 
 const url = {
 	// 登录
@@ -78,6 +78,10 @@ const url = {
 	'Orders': BaseURL + '/orders', // 获取订单列表
 	'OrdersGoods': BaseURL + '/order/goods', // 获取订单商品
 	'ConfirmShipments': BaseURL + '/confirm/shipments', // 确认收货
+	'CreationLogistic': BaseURL + '/creation/logistic', // 创建物流
+	'Logistics': BaseURL + '/logistics', // 物流列表
+	'DelLogistic': BaseURL + '/logistic', // 删除物流列表
+	'OrderInquire': BaseURL + '/order/inquire', // 物流信息
 
 
 }

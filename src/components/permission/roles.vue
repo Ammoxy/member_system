@@ -285,11 +285,22 @@
                         </el-checkbox>
                         <el-checkbox label="orderGood" @change="oneChange" class="permission-span">订单商品</el-checkbox>
                         <el-checkbox label="sendGood" @change="oneChange" class="permission-span">普通订单发货</el-checkbox>
+                        <el-checkbox label="logisticsGood" @change="oneChange" class="permission-span">普通订单物流信息</el-checkbox>
                       </div>
                       <div class="level2">
                         <el-checkbox label="distributionMer" @change="oneChange" class="permission-span">会员订单配送信息
                         </el-checkbox>
                         <el-checkbox label="sendGoodMer" @change="oneChange" class="permission-span">会员订单发货
+                        </el-checkbox>
+                        <el-checkbox label="logisticsGoodMer" @change="oneChange" class="permission-span">会员订单物流信息
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="logisticsAdd" @change="oneChange" class="permission-span">创建物流
+                        </el-checkbox>
+                        <el-checkbox label="logisticsEidt" @change="oneChange" class="permission-span">编辑物流信息
+                        </el-checkbox>
+                        <el-checkbox label="logisticsDel" @change="oneChange" class="permission-span">删除
                         </el-checkbox>
                       </div>
                     </div>
@@ -548,11 +559,22 @@
                         </el-checkbox>
                         <el-checkbox label="orderGood" @change="oneChange" class="permission-span">订单商品</el-checkbox>
                         <el-checkbox label="sendGood" @change="oneChange" class="permission-span">普通订单发货</el-checkbox>
+                        <el-checkbox label="logisticsGood" @change="oneChange" class="permission-span">普通订单物流信息</el-checkbox>
                       </div>
                       <div class="level2">
                         <el-checkbox label="distributionMer" @change="oneChange" class="permission-span">会员订单配送信息
                         </el-checkbox>
                         <el-checkbox label="sendGoodMer" @change="oneChange" class="permission-span">会员订单发货
+                        </el-checkbox>
+                        <el-checkbox label="logisticsGoodMer" @change="oneChange" class="permission-span">会员订单物流信息
+                        </el-checkbox>
+                      </div>
+                      <div class="level2">
+                        <el-checkbox label="logisticsAdd" @change="oneChange" class="permission-span">创建物流
+                        </el-checkbox>
+                        <el-checkbox label="logisticsEidt" @change="oneChange" class="permission-span">编辑物流信息
+                        </el-checkbox>
+                        <el-checkbox label="logisticsDel" @change="oneChange" class="permission-span">删除
                         </el-checkbox>
                       </div>
                     </div>
@@ -646,7 +668,12 @@
           "commonOrder",
           "memberOrder",
           "expressage",
+          "logisticsAdd",
+          "logisticsEidt",
+          "logisticsDel",
           "distribution",
+          "logisticsGood",
+          "logisticsGoodMer",
           "orderGood",
           "sendGood",
           "distributionMer",
@@ -715,7 +742,12 @@
           "commonOrder",
           "memberOrder",
           "expressage",
+          "logisticsAdd",
+          "logisticsEidt",
+          "logisticsDel",
           "distribution",
+          "logisticsGood",
+          "logisticsGoodMer",
           "orderGood",
           "sendGood",
           "distributionMer",

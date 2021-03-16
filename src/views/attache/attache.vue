@@ -115,7 +115,7 @@
             <el-table :data="recDate" empty-text="暂无数据" border :header-cell-style="{ background: '#f0f0f0' }"
                 max-height="620">
                 <el-table-column prop="id" label="ID"></el-table-column>
-                <el-table-column prop="order.no" label="订单号"></el-table-column>
+                <el-table-column prop="order.no" label="支付订单号"></el-table-column>
                 <el-table-column prop="money" label="佣金"></el-table-column>
                 <el-table-column prop="type" label="类型">
                     <template slot-scope="scope">

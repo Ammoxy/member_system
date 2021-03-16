@@ -377,10 +377,39 @@ API.ordersGoods = function (order_id) {
 	})
 }
 // 确认收货
-API.confirmShipments = function (order_id, type) {
+API.confirmShipments = function (order_id, type, express_no, logistics_id) {
 	return axios.post(url.ConfirmShipments, {
 		order_id: order_id,
-		type: type
+		type: type,
+		express_no: express_no,
+		logistics_id: logistics_id
+	})
+}
+
+// 创建物流
+API.creationLogistic = function (data) {
+	return axios.post(url.CreationLogistic, data)
+}
+// 物流列表
+API.logistics = function (currentPage, perPage, name) {
+	return axios.get(url.Logistics, {
+		currentPage: currentPage,
+		perPage: perPage,
+		name: name,
+	})
+}
+// 删除物流列表
+API.delLogistic = function (id) {
+	return axios.del(url.DelLogistic, {
+		id: id
+	})
+}
+
+// 物流列表
+API.OrderInquire = function (express_no, logistics_id) {
+	return axios.get(url.OrderInquire, {
+		express_no: express_no,
+		logistics_id: logistics_id
 	})
 }
 

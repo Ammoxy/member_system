@@ -17,7 +17,9 @@
         </div>
         <el-table :data="tableData" border :header-cell-style="{ background: '#f0f0f0' }" max-height="620">
             <el-table-column prop="id" label="ID"></el-table-column>
-            <el-table-column prop="no" label="订单号"></el-table-column>
+            <el-table-column prop="logistic" label="物流"></el-table-column>
+            <el-table-column prop="no" label="支付订单号"></el-table-column>
+            <el-table-column prop="express_no" label="快递订单号"></el-table-column>
             <el-table-column prop="user.nickname" label="微信名"></el-table-column>
             <el-table-column prop="userGood.img" label="头像">
                 <template slot-scope="scope">
@@ -84,6 +86,11 @@
                                 <el-button size="mini" type="primary" @click="handleDetail(scope.$index, scope.row)"
                                     v-if="scope.row.is_fetch == 2">
                                     自提信息
+                                </el-button>
+                            </el-dropdown-item>
+                            <el-dropdown-item>
+                                <el-button size="mini" type="primary" @click="handleLogistics(scope.$index, scope.row)">
+                                    物流信息
                                 </el-button>
                             </el-dropdown-item>
                             <el-dropdown-item>
@@ -188,12 +195,67 @@
         </el-dialog>
 
         <!-- 发货 -->
-        <el-dialog :visible.sync="dialogShipments" title="发货" width="20%" align="center" :close-on-click-modal="false">
-            <div style="font-size: 20px; margin-bottom: 30px;">是否发货</div>
+        <el-dialog :visible.sync="dialogShipments" title="是否发货" width="50%" align="center"
+            :close-on-click-modal="false">
+            <el-form :model="issueForm" label-width="50px">
+                <el-form-item label="用户">
+                    <el-input placeholder="请输入快递订单号" v-model="issueForm.orderNum" class="input-with-select input">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="物流">
+                    <div class="ipt-box">
+                        <el-input v-model="logistics_name" placeholder="请输入物流名" class="input-with-select"
+                            @keyup.enter.native="searchLogistics(logistics_name)"
+                            style="width: 300px; margin-right: 20px">
+                            <el-button slot="append" icon="el-icon-search" @click="searchLogistics(logistics_name)">
+                            </el-button>
+                        </el-input>
+                        <el-select v-model="issueForm.logistics_id" filterable placeholder="请选择物流"
+                            style="width: 500px;">
+                            <el-option v-for="item in logisticsData" :label="item.name" :value="item.id" :key="item.id">
+                            </el-option>
+                        </el-select>
+                    </div>
+                </el-form-item>
+            </el-form>
             <span>
                 <el-button type="primary" @click="toConfirm">确定</el-button>
                 <el-button type="danger" @click="dialogShipments = false">取消</el-button>
             </span>
+        </el-dialog>
+
+        <el-dialog title="物流信息" :visible.sync="dialogLogistics" width="50%" center>
+            <div class="box">
+                <el-card class="box-card">
+                    <div slot="header" class="clearfix">
+                        <span>物流信息</span>
+                    </div>
+                    <div class="text item">
+                        {{'物流运单号: ' + logisticsList.LogisticCode }}
+                    </div>
+                    <div class="text item">
+                        {{'快递公司编号: ' + logisticsList.ShipperCode }}
+                    </div>
+                    <div class="text item" v-if="logisticsList.State == 0">
+                        {{'物流状态: ' + '暂无物流信息' }}
+                    </div>
+                    <div class="text item" v-if="logisticsList.State == 1">
+                        {{'物流状态: ' + '已取件' }}
+                    </div>
+                    <div class="text item" v-if="logisticsList.State == 2">
+                        {{'物流状态: ' + '在途中' }}
+                    </div>
+                    <div class="text item" v-if="logisticsList.State == 3">
+                        {{'物流状态: ' + '已签收' }}
+                    </div>
+                </el-card>
+                <el-timeline>
+                    <el-timeline-item v-for="(item, index) in logisticsList.Traces" :key="index"
+                        :timestamp="item.AcceptTime">
+                        {{item.AcceptStation}}
+                    </el-timeline-item>
+                </el-timeline>
+            </div>
         </el-dialog>
 
     </div>
@@ -228,6 +290,7 @@
                 // orderSize: 10,
 
                 dialogShipments: false,
+                dialogLogistics: false, // 物流
 
                 orderStatus: '',
                 statusList: [{
@@ -256,6 +319,16 @@
                 ],
 
                 keyword: '',
+                // orderNum: '',
+                // logistics_id: '',
+                issueForm: {
+                    orderNum: '',
+                    logistics_id: ''
+                },
+                logistics_name: '',
+                logisticsData: [],
+                logisticsList: [],
+                logisticsText: ''
             }
         },
 
@@ -265,6 +338,21 @@
         },
 
         methods: {
+            searchLogistics() {
+                var self = this;
+                const loading = this.$loading({
+                    lock: true,
+                    text: 'loading...',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                API.logistics(1, 10, self.logistics_name).then(res => {
+                    self.logisticsData = res.result.data;
+                    loading.close()
+                }).catch(err => {
+                    loading.close()
+                })
+            },
             getOrderList(cur, list, status, no, good_id) {
                 var self = this;
                 self.loading = true;
@@ -369,11 +457,12 @@
             handleShipments(index, row) {
                 var self = this;
                 self.order_id = row.id;
+                // self.logistics_id = row.logistics_id;
                 if (self.permissionData.includes("sendGood")) {
                     if (row.status == 2) {
                         self.dialogShipments = true;
                     } else {
-                        self.$message.warning("订单已发货");
+                        self.$message.warning("无效操作");
                     }
                 } else {
                     self.$message.warning("无权操作");
@@ -382,12 +471,39 @@
 
             toConfirm() {
                 var self = this;
+                var orderNum = self.issueForm.orderNum;
+                var logistics_id = self.issueForm.logistics_id;
 
-                API.confirmShipments(self.order_id, 1).then(res => {
-                    self.$message.success("发货成功");
-                    self.dialogShipments = false;
-                    self.getOrderList(self.current, self.size);
-                })
+                if (orderNum && logistics_id) {
+                    API.confirmShipments(self.order_id, 1, orderNum, logistics_id).then(res => {
+                        self.$message.success("发货成功");
+                        self.dialogShipments = false;
+                        self.getOrderList(self.current, self.size);
+                    })
+                } else {
+                    self.$message.warning("请输入订单号");
+                }
+            },
+
+            // 物流信息
+            handleLogistics(index, row) {
+                var self = this;
+                var orderNum = row.express_no;
+                var logistics_id = row.logistics_id;
+                if (self.permissionData.includes("logisticsGood")) {
+                    if (logistics_id > 0) {
+                        self.dialogLogistics = true;
+                        API.OrderInquire(orderNum, logistics_id).then(res => {
+                            self.logisticsList = res.result;
+                            self.logisticsText = res.result.Reason
+                        })
+                    } else {
+                        self.$message.warning('暂无物流信息');
+                    }
+
+                } else {
+                    self.$message.warning("无权操作");
+                }
             },
 
             // 刷新
@@ -416,5 +532,13 @@
 
     .clearfix:after {
         clear: both
+    }
+
+    .input {
+        margin-bottom: 20px;
+    }
+
+    .ipt-box {
+        display: flex;
     }
 </style>
