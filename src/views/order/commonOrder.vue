@@ -98,7 +98,7 @@
                                     订单商品
                                 </el-button>
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item v-if="scope.row.status == 2">
                                 <el-button size="mini" type="primary" @click="handleShipments(scope.$index, scope.row)">
                                     发货
                                 </el-button>
@@ -459,11 +459,11 @@
                 self.order_id = row.id;
                 // self.logistics_id = row.logistics_id;
                 if (self.permissionData.includes("sendGood")) {
-                    if (row.status == 2) {
-                        self.dialogShipments = true;
-                    } else {
-                        self.$message.warning("无效操作");
-                    }
+                    // if (row.status == 2) {
+                    self.dialogShipments = true;
+                    // } else {
+                    //     self.$message.warning("无效操作");
+                    // }
                 } else {
                     self.$message.warning("无权操作");
                 }

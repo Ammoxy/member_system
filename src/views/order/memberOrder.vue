@@ -96,7 +96,7 @@
                                     物流信息
                                 </el-button>
                             </el-dropdown-item>
-                            <el-dropdown-item>
+                            <el-dropdown-item v-if="scope.row.status == 2">
                                 <el-button size="mini" type="primary" @click="handleShipments(scope.$index, scope.row)">
                                     发货
                                 </el-button>
