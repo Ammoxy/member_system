@@ -137,10 +137,10 @@
                         <el-checkbox label="keyword" @change="oneChange" class="permission-span">关键字
                         </el-checkbox>
                       </div>
-                      <div class="level2">
+                      <!-- <div class="level2">
                         <el-checkbox label="activity" @change="oneChange" class="permission-span">活动
                         </el-checkbox>
-                      </div>
+                      </div> -->
                     </div>
                     <div class="tb set" style="width: 60%;">
                       <div class="level2">
@@ -163,10 +163,10 @@
                         <el-checkbox label="keywordEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
                         <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox>
                       </div>
-                      <div class="level2">
+                      <!-- <div class="level2">
                         <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
                         <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                   <div class="table">
@@ -392,10 +392,10 @@
                         <el-checkbox label="keyword" @change="oneChange" class="permission-span">关键字
                         </el-checkbox>
                       </div>
-                      <div class="level2">
+                      <!-- <div class="level2">
                         <el-checkbox label="activity" @change="oneChange" class="permission-span">活动
                         </el-checkbox>
-                      </div>
+                      </div> -->
                     </div>
                     <div class="tb set" style="width: 60%;">
                       <div class="level2">
@@ -418,10 +418,10 @@
                         <el-checkbox label="keywordEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
                         <el-checkbox label="keywordDel" @change="oneChange" class="permission-span">删除</el-checkbox>
                       </div>
-                      <div class="level2">
+                      <!-- <div class="level2">
                         <el-checkbox label="activityAdd" @change="oneChange" class="permission-span">新增活动</el-checkbox>
                         <el-checkbox label="kactivityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                   <div class="table">
@@ -648,9 +648,9 @@
           "keywordAdd",
           "keywordEdit",
           "keywordDel",
-          "activity",
-          "activityAdd",
-          "kactivityEdit",
+          // "activity",
+          // "activityAdd",
+          // "kactivityEdit",
           "user",
           "attache",
           "apply",
@@ -720,9 +720,9 @@
           "keywordAdd",
           "keywordEdit",
           "keywordDel",
-          "activity",
-          "activityAdd",
-          "kactivityEdit",
+          // "activity",
+          // "activityAdd",
+          // "kactivityEdit",
           "attache",
           "apply",
           "withdraw",
@@ -954,7 +954,7 @@
   }
 
   .permission-span {
-    width: 80px;
+    width: 120px;
   }
 
   .step {

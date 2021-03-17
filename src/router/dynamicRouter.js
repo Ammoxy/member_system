@@ -40,14 +40,14 @@ const dynamicRouter = [{
 					title: '关键字列表'
 				}
 			},
-			{
-				path: '/activity',
-				name: 'activity',
-				component: () => import('@/components/commodity/activity.vue'),
-				meta: {
-					title: '活动列表'
-				}
-			},
+			// {
+			// 	path: '/activity',
+			// 	name: 'activity',
+			// 	component: () => import('@/components/commodity/activity.vue'),
+			// 	meta: {
+			// 		title: '活动列表'
+			// 	}
+			// },
 		]
 	},
 	{
