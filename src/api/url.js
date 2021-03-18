@@ -65,6 +65,7 @@ const url = {
 	'CommissionSource': BaseURL + '/commission/source', // 获取健康专员佣金来源
 	'MerCommission': BaseURL + '/merchant/commission', // 获取商家佣金来源
 	'MoneyEmpty': BaseURL + '/money/empty', // 余额清0
+	'CreationQrCode': BaseURL + '/creation/qrCode', // 重新生成二维码
 
 	// 专家
 	'Specialists': BaseURL + '/specialists', // 专家列表

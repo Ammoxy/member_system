@@ -79,6 +79,12 @@
                                 </el-button>
                             </el-dropdown-item>
                             <el-dropdown-item>
+                                <el-button size="mini" type="primary"
+                                    @click="handleCreateQRcode(scope.$index, scope.row)">
+                                    重新生成二维码
+                                </el-button>
+                            </el-dropdown-item>
+                            <el-dropdown-item>
                                 <el-button size="mini" type="primary" @click="handleQRcode(scope.$index, scope.row)">
                                     查看二维码
                                 </el-button>
@@ -204,6 +210,16 @@
                 <el-button type="danger" @click="dialogEmpty = false">取消</el-button>
             </span>
         </el-dialog>
+
+        <!-- 重新生成二维码 -->
+        <el-dialog :visible.sync="dialogCreateQRcode" title="重新生成二维码" width="20%" align="center"
+            :close-on-click-modal="false">
+            <div style="font-size: 20px; margin-bottom: 30px;">是否重新生成二维码</div>
+            <span>
+                <el-button type="primary" @click="toConfirm">确定</el-button>
+                <el-button type="danger" @click="dialogCreateQRcode = false">取消</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -224,6 +240,7 @@
                 nickname: '',
                 dialogAudit: false,
                 dialogQRcode: false,
+                dialogCreateQRcode: false,
                 user_id: '',
                 qr_code: '',
                 keyword: '',
@@ -235,6 +252,7 @@
                 dialogUnderling: false,
                 underlingData: [],
                 dialogEmpty: false,
+                id: '', // id
             }
         },
 
@@ -281,7 +299,31 @@
             search() {
                 var self = this;
                 self.current = 1;
+                self.loading = true;
                 self.getList(self.current, self.size, self.keyword);
+            },
+
+            handleCreateQRcode(idex, row) {
+                var self = this;
+                if (self.permissionData.includes("createQrcode")) {
+                    if (row.qr_code) {
+                        self.dialogCreateQRcode = true;
+                        self.id = row.id
+                    } else {
+                        self.$message.warning("暂无二维码");
+                    }
+                } else {
+                    self.$message.warning("无权操作");
+                }
+            },
+
+            toConfirm() {
+                var self = this;
+                API.creationQrCode(self.id).then(res => {
+                    self.$message.success("操作成功！");
+                    self.dialogCreateQRcode = false;
+                    self.getList(self.current, self.size)
+                })
             },
 
             handleQRcode(index, row) {

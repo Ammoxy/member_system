@@ -236,7 +236,7 @@
             // 上传图片
             upload() {
                 var self = this;
-                if (self.form.img && self.form.target && self.form.sort) {
+                if (self.form.img && self.form.sort) {
                     const loading = self.$loading({
                         lock: true,
                         text: "提交中...",

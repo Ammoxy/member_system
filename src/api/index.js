@@ -315,6 +315,12 @@ API.moneyEmpty = function (user_id) {
 		user_id: user_id
 	})
 }
+// 重新生成二维码
+API.creationQrCode = function (id) {
+	return axios.post(url.CreationQrCode, {
+		id: id
+	})
+}
 
 // 新增专家
 API.createSpecialists = function (data) {

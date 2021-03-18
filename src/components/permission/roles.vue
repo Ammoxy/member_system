@@ -199,6 +199,8 @@
                         </el-checkbox>
                         <el-checkbox label="commission" @change="oneChange" class="permission-span">佣金来源
                         </el-checkbox>
+                        <el-checkbox label="createQrcode" @change="oneChange" class="permission-span">重新生成二维码
+                        </el-checkbox>
                         <el-checkbox label="qrcode" @change="oneChange" class="permission-span">查看二维码
                         </el-checkbox>
                         <el-checkbox label="emptyMoney" @change="oneChange" class="permission-span">余额清零
@@ -458,6 +460,8 @@
                         </el-checkbox>
                         <el-checkbox label="commission" @change="oneChange" class="permission-span">佣金来源
                         </el-checkbox>
+                        <el-checkbox label="createQrcode" @change="oneChange" class="permission-span">重新生成二维码
+                        </el-checkbox>
                         <el-checkbox label="qrcode" @change="oneChange" class="permission-span">查看二维码
                         </el-checkbox>
                         <el-checkbox label="emptyMoney" @change="oneChange" class="permission-span">余额清零
@@ -659,6 +663,7 @@
           "underling",
           "commission",
           "qrcode",
+          "createQrcode",
           "emptyMoney",
           "expert",
           "expertEdit",
@@ -732,6 +737,7 @@
           "underling",
           "commission",
           "qrcode",
+          "createQrcode",
           "emptyMoney",
           "user",
           "expert",

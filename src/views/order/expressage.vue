@@ -162,6 +162,7 @@
             search() {
                 var self = this;
                 self.current = 1;
+                self.loading = true;
                 self.getList(self.current, self.size, self.keyword)
             },
 
