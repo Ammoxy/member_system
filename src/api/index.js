@@ -174,6 +174,12 @@ API.goodDetail = function (id) {
 		id: id
 	})
 }
+// 删除商品
+API.delGood = function (id) {
+	return axios.del(url.DelGood, {
+		id: id
+	})
+}
 // 添加会员商品
 API.createUserGoods = function (data) {
 	return axios.post(url.CreateUserGoods, data)
@@ -185,6 +191,12 @@ API.userGoods = function (currentPage, perPage, name, on_shelf) {
 		perPage: perPage,
 		name: name,
 		on_shelf: on_shelf
+	})
+}
+// 删除会员商品
+API.delUserGood = function (id) {
+	return axios.del(url.DelUserGood, {
+		id: id
 	})
 }
 // 获取会员商品详情

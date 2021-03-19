@@ -148,9 +148,10 @@
             <el-table-column prop="sales" label="销量"></el-table-column>
             <el-table-column prop="browse" label="浏览量"></el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="180"></el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="200px">
                 <template slot-scope="scope">
                     <el-button type="primary" size="mini" @click="handleDetail(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="danger" size="mini" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -162,7 +163,7 @@
                 :total="total" @size-change="sizeChange">
             </el-pagination>
         </div>
-        
+
         <el-dialog :visible.sync="dialogSel" title="可到店自取部门" @close="close" width="85%">
             <el-form label-width="150px" :model="goodsInfo">
                 <el-form-item label="可以到店自取的部门">
@@ -182,6 +183,15 @@
                     </el-form-item>
                 </div>
             </el-form>
+        </el-dialog>
+
+        <!-- 删除提示框 -->
+        <el-dialog :visible.sync="dialogDel" title="删除商品" width="20%" align="center" :close-on-click-modal="false">
+            <div style="font-size: 20px; margin-bottom: 30px;">是否删除</div>
+            <span>
+                <el-button type="primary" @click="toDel">删除</el-button>
+                <el-button type="danger" @click="dialogDel = false">取消</el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -649,6 +659,29 @@
                 var self = this;
                 self.fileLists = [];
                 self.files = [];
+            },
+
+            // 删除  
+            handleDelete(index, row) {
+                var self = this;
+                if (self.permissionData.includes("memberGoodDel")) {
+                    self.dialogDel = true;
+                } else {
+                    self.$message.warning("无权操作");
+                }
+                self.id = row.id;
+            },
+            toDel() {
+                var self = this;
+                API.delUserGood(self.id).then((res) => {
+                    if (res.code == 10000) {
+                        self.$message.success("删除成功");
+                        self.dialogDel = false;
+                        self.getList(self.current, self.size);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                });
             },
 
             // 富文本选择图片时的事件

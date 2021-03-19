@@ -159,14 +159,6 @@
                         @change="notifyChange(scope.row.is_fetch, scope.$index, scope.row)">
                     </el-switch>
                 </template>
-                <!-- <template slot-scope="scope">
-                    <div v-if="scope.row.is_fetch == 1">
-                        <span>是</span>
-                    </div>
-                    <div v-if="scope.row.is_fetch == 2">
-                        <span>否</span>
-                    </div>
-                </template> -->
             </el-table-column>
             <el-table-column prop="on_shelf" label="是否上架">
                 <template slot-scope="scope">
@@ -182,11 +174,12 @@
             <el-table-column prop="sales" label="销量"></el-table-column>
             <el-table-column prop="browse" label="浏览量"></el-table-column>
             <el-table-column prop="created_at" label="创建时间" width="180"></el-table-column>
-            <el-table-column label="操作" width="200px">
+            <el-table-column label="操作" width="250px">
                 <template slot-scope="scope">
                     <el-button type="primary" size="mini" @click="handleDetail(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="primary" size="mini" @click="handleClassify(scope.$index, scope.row)">编辑分类
                     </el-button>
+                    <el-button type="danger" size="mini" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -261,6 +254,15 @@
                     </el-form-item>
                 </div>
             </el-form>
+        </el-dialog>
+
+        <!-- 删除提示框 -->
+        <el-dialog :visible.sync="dialogDel" title="删除商品" width="20%" align="center" :close-on-click-modal="false">
+            <div style="font-size: 20px; margin-bottom: 30px;">是否删除</div>
+            <span>
+                <el-button type="primary" @click="toDel">删除</el-button>
+                <el-button type="danger" @click="dialogDel = false">取消</el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -975,6 +977,30 @@
                 }
 
 
+            },
+
+            // 删除  
+            handleDelete(index, row) {
+                var self = this;
+                if (self.permissionData.includes("commodityDel")) {
+                    self.dialogDel = true;
+                } else {
+                    self.$message.warning("无权操作");
+                }
+                self.id = row.id;
+            },
+            toDel() {
+                var self = this;
+                API.delGood(self.id).then((res) => {
+                    // console.log(res);
+                    if (res.code == 10000) {
+                        self.$message.success("删除成功");
+                        self.dialogDel = false;
+                        self.getList(self.current, self.size);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                });
             },
 
             // 富文本选择图片时的事件

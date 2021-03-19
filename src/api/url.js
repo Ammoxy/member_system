@@ -50,6 +50,8 @@ const url = {
 	'DelKeyword': BaseURL + '/keyword', // 删除关键字
 	'CreateActivity': BaseURL + '/creation/activity', // 创建活动
 	'Activities': BaseURL + '/activities', // 获取活动
+	'DelGood': BaseURL + '/del/good', // 删除商品
+	'DelUserGood': BaseURL + '/del/user/good', // 删除会员商品
 
 	// 用户
 	'WxUser': BaseURL + '/wx/users', // 获取用户列表

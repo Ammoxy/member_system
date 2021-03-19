@@ -270,15 +270,18 @@
                 var self = this;
                 API.seleClassify().then(res => {
                     self.parentList = res.result;
-                    res.result.forEach(item => {
-                        if (item.type == 1) {
-                            item.name = item.name + ' ' + '(一级)'
-                        } else if (item.type == 2) {
-                            item.name = item.name + ' ' + '(二级)'
-                        } else if (item.type == 3) {
-                            item.name = item.name + ' ' + '(三级)'
-                        }
-                    })
+                    if (res.result.length > 0) {
+                        res.result.forEach(item => {
+                            if (item.type == 1) {
+                                item.name = item.name + ' ' + '(一级)'
+                            } else if (item.type == 2) {
+                                item.name = item.name + ' ' + '(二级)'
+                            } else if (item.type == 3) {
+                                item.name = item.name + ' ' + '(三级)'
+                            }
+                        })
+                    }
+
                 })
             },
             parentChange(val) {
@@ -420,7 +423,7 @@
             handleDelete(index, row) {
                 var self = this;
                 if (self.permissionData.includes("classifyGoodDel")) {
-                    self.dialogClassify = true;
+                    self.dialogDel = true;
                 } else {
                     self.$message.warning("无权操作");
                 }

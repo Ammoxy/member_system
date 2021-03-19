@@ -38,8 +38,8 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :visible.sync="dialogDel" title="删除年级" width="20%" align="center" :close-on-click-modal="false">
-      <div style="font-size: 20px; margin-bottom: 30px;">是否删除该文档</div>
+    <el-dialog :visible.sync="dialogDel" title="删除文档" width="20%" align="center" :close-on-click-modal="false">
+      <div style="font-size: 20px; margin-bottom: 30px;">是否删除</div>
       <span>
         <el-button type="primary" @click="toDel">删除</el-button>
         <el-button type="danger" @click="dialogDel = false">取消</el-button>

@@ -87,7 +87,7 @@
         </div> -->
 
         <!-- 删除提示框 -->
-        <el-dialog :visible.sync="dialogDel" title="删除轮播图" width="20%" align="center" :close-on-click-modal="false">
+        <el-dialog :visible.sync="dialogDel" title="删除资讯类型" width="20%" align="center" :close-on-click-modal="false">
             <div style="font-size: 20px; margin-bottom: 30px;">是否删除</div>
             <span>
                 <el-button type="primary" @click="toDel">删除</el-button>

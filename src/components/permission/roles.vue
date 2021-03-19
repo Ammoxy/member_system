@@ -18,7 +18,7 @@
     </el-table>
 
     <el-dialog :visible.sync="dialogDel" title="删除角色" width="20%" align="center" :close-on-click-modal="false">
-      <div style="font-size: 20px; margin-bottom: 30px">是否删除该角色</div>
+      <div style="font-size: 20px; margin-bottom: 30px">是否删除</div>
       <span>
         <el-button type="primary" @click="toDel">删除</el-button>
         <el-button type="danger" @click="dialogDel = false">取消</el-button>
@@ -157,6 +157,8 @@
                         <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
                         <el-checkbox label="classifyEdit" @change="oneChange" class="permission-span">编辑商品分类
                         </el-checkbox>
+                        <el-checkbox label="commodityDel" @change="oneChange" class="permission-span">删除商品
+                        </el-checkbox>
                       </div>
                       <div class="level2">
                         <el-checkbox label="keywordAdd" @change="oneChange" class="permission-span">新增关键字</el-checkbox>
@@ -256,6 +258,8 @@
                         </el-checkbox>
                         <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
                         </el-checkbox>
+                        <el-checkbox label="memberGoodDel" @change="oneChange" class="permission-span">删除会员商品
+                        </el-checkbox>
                       </div>
                     </div>
                   </div>
@@ -287,7 +291,8 @@
                         </el-checkbox>
                         <el-checkbox label="orderGood" @change="oneChange" class="permission-span">订单商品</el-checkbox>
                         <el-checkbox label="sendGood" @change="oneChange" class="permission-span">普通订单发货</el-checkbox>
-                        <el-checkbox label="logisticsGood" @change="oneChange" class="permission-span">普通订单物流信息</el-checkbox>
+                        <el-checkbox label="logisticsGood" @change="oneChange" class="permission-span">普通订单物流信息
+                        </el-checkbox>
                       </div>
                       <div class="level2">
                         <el-checkbox label="distributionMer" @change="oneChange" class="permission-span">会员订单配送信息
@@ -414,6 +419,8 @@
                         <el-checkbox label="commodityEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
                         <el-checkbox label="classifyEdit" @change="oneChange" class="permission-span">编辑商品分类
                         </el-checkbox>
+                        <el-checkbox label="commodityDel" @change="oneChange" class="permission-span">删除商品
+                        </el-checkbox>
                       </div>
                       <div class="level2">
                         <el-checkbox label="keywordAdd" @change="oneChange" class="permission-span">新增关键字</el-checkbox>
@@ -525,6 +532,8 @@
                         </el-checkbox>
                         <el-checkbox label="memberGoodsEdit" @change="oneChange" class="permission-span">编辑
                         </el-checkbox>
+                        <el-checkbox label="memberGoodDel" @change="oneChange" class="permission-span">删除会员商品
+                        </el-checkbox>
                       </div>
                       <!-- <div class="level2">
                         <el-checkbox label="expertEdit" @change="oneChange" class="permission-span">编辑</el-checkbox>
@@ -563,7 +572,8 @@
                         </el-checkbox>
                         <el-checkbox label="orderGood" @change="oneChange" class="permission-span">订单商品</el-checkbox>
                         <el-checkbox label="sendGood" @change="oneChange" class="permission-span">普通订单发货</el-checkbox>
-                        <el-checkbox label="logisticsGood" @change="oneChange" class="permission-span">普通订单物流信息</el-checkbox>
+                        <el-checkbox label="logisticsGood" @change="oneChange" class="permission-span">普通订单物流信息
+                        </el-checkbox>
                       </div>
                       <div class="level2">
                         <el-checkbox label="distributionMer" @change="oneChange" class="permission-span">会员订单配送信息
@@ -641,12 +651,14 @@
           "commodity",
           "commodityList",
           "commodityAdd",
+          "commodityDel",
           "commodityEdit",
           "classifyEdit",
           "member",
           "memberGoods",
           "memberUser",
           "memberGoodsAdd",
+          "memberGoodDel",
           "memberGoodsEdit",
           "keyword",
           "keywordAdd",
@@ -714,12 +726,14 @@
           "commodity",
           "commodityList",
           "commodityAdd",
+          "commodityDel",
           "commodityEdit",
           "classifyEdit",
           "member",
           "memberGoods",
           "memberUser",
           "memberGoodsAdd",
+          "memberGoodDel",
           "memberGoodsEdit",
           "keyword",
           "keywordAdd",
