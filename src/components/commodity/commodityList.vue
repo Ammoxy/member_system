@@ -28,7 +28,7 @@
                 </el-form-item>
                 <el-form-item label="可以到店自取的部门" v-if="goodsInfo.is_fetch == 1">
                     <el-select v-model="goodsInfo.have_merchant" multiple placeholder="请选择部门(可多选)"
-                        @change="merchantChange" style="width: 400px" :disabled="isDisabled">
+                        @change="merchantChange" style="width: 400px">
                         <el-option v-for="(item1, index) in merchantList" :key="index" :label="item1.name"
                             :value="item1.id">
                         </el-option>
