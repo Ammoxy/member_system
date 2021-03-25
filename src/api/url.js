@@ -32,6 +32,9 @@ const url = {
 	'Document': BaseURL + '/document/list', // 获取资讯
 	'CreateDocument': BaseURL + '/creation/document', // 新增资讯
 	'DelDocument': BaseURL + '/document', // 删除资讯
+	'ImgesList': BaseURL + '/images/list', // 获取图片资源列表
+	'CreateImg': BaseURL + '/creation/image', // 新增图片
+	'DelImg': BaseURL + '/del/image', // 删除图片
 
 	// 分类管理
 	'Classify': BaseURL + '/classify', // 获取分类/删除分类

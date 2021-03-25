@@ -24,7 +24,7 @@
                 layout="sizes, prev, pager, next, jumper" :total="total" @size-change="sizeChange"></el-pagination>
         </div>
 
-        <el-dialog title="编辑" :visible.sync="dialogKeyword" :close-on-click-modal="false" width="800px">
+        <el-dialog :title="isAdd ? '添加关键字' : '编辑'" center :visible.sync="dialogKeyword" :close-on-click-modal="false" width="800px">
             <el-form label-width="80px" :model="form">
                 <el-form-item label="关键字">
                     <el-input v-model="form.keyword"></el-input>
@@ -86,7 +86,8 @@
                     keyword: ''
                 },
                 id: '',
-                permissionData: []
+                permissionData: [],
+                isAdd: false
             }
         },
 
@@ -134,7 +135,8 @@
                 self.form = {
                     count: '',
                     keyword: ''
-                }
+                };
+                self.isAdd = true;
             },
 
             newKeywords() {
@@ -186,7 +188,8 @@
                     count: row.count,
                     keyword: row.keyword,
                     id: row.id
-                }
+                };
+                self.isAdd = false;
             },
             // 选择搜索方式
             //   changeType(val) {

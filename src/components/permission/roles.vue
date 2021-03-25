@@ -31,7 +31,7 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="添加角色" :visible.sync="dialogRole" width="80%" :close-on-click-modal="false" @close='close'>
+    <el-dialog title="编辑" :visible.sync="dialogRole" center width="80%" :close-on-click-modal="false" @close='close'>
       <div class="box">
         <el-form :model="form" label-width="120px">
           <el-form-item label="角色名称">
@@ -112,6 +112,8 @@
                       <el-checkbox label="banner" @change="oneChange" class="permission-span">轮播图管理
                       </el-checkbox>
                       <el-checkbox label="message" @change="oneChange" class="permission-span">资讯管理
+                      </el-checkbox>
+                      <el-checkbox label="picture" @change="oneChange" class="permission-span">图片资源
                       </el-checkbox>
                     </div>
                     <div class="tb set" style="width: 60%;"></div>
@@ -699,6 +701,7 @@
           "information",
           "banner",
           "message",
+          "picture",
           "classify",
           'classifyGoodAdd',
           'classifyGoodEdit',

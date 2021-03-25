@@ -57,7 +57,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog :visible.sync="dialogExpert" title="添加专家" width="1000px" @close="close">
+        <el-dialog :visible.sync="dialogExpert" :title="isAdd ? '添加专家' : '编辑'" center width="1000px" @close="close">
             <el-form label-width="100px" :model="expertyInfo">
                 <el-form-item label="名称">
                     <el-input v-model="expertyInfo.name"></el-input>
@@ -182,6 +182,7 @@
                         },
                     },
                 },
+                isAdd: false
             }
         },
 
@@ -224,7 +225,7 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
-
+                self.isAdd = true;
             },
 
             close() {
@@ -258,6 +259,7 @@
                 var self = this;
                 if (self.permissionData.includes("expertEdit")) {
                     self.dialogExpert = true;
+                    self.isAdd = false;
                     console.log(row);
                     self.expertyInfo = {
                         name: row.name,

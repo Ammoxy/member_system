@@ -117,7 +117,7 @@
         </el-dialog>
 
         <!-- 佣金来源 -->
-        <el-dialog title="佣金来源" :visible.sync="dialogRec" width="80%">
+        <el-dialog title="佣金来源" center :visible.sync="dialogRec" width="80%">
             <el-table :data="recDate" empty-text="暂无数据" border :header-cell-style="{ background: '#f0f0f0' }"
                 max-height="620">
                 <el-table-column prop="id" label="ID"></el-table-column>
@@ -157,7 +157,7 @@
         </el-dialog>
 
         <!-- 下级会员 -->
-        <el-dialog title="下级会员" :visible.sync="dialogUnderling" width="85%">
+        <el-dialog title="下级会员" center :visible.sync="dialogUnderling" width="85%">
             <el-table :data="underlingData" empty-text="暂无数据" border :header-cell-style="{ background: '#f0f0f0' }"
                 max-height="620">
                 <el-table-column prop="id" label="ID"></el-table-column>

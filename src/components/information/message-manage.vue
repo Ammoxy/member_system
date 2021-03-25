@@ -36,7 +36,7 @@
       </el-pagination>
     </div>
 
-    <el-dialog :visible.sync="dialogMessageMs" title="文档编辑" width="60%" @close="close">
+    <el-dialog :visible.sync="dialogMessageMs" :title="isAdd ? '添加资讯' : '编辑'" center width="60%" @close="close">
       <el-form label-width="80px" :model="form">
         <el-form-item label="资讯类型">
           <el-select v-model="form.document_type" placeholder="请选择资讯分类" @change="typeChange">
@@ -176,7 +176,8 @@
         is_show: 2,
         name: "",
         files: [],
-        is_show: false
+        is_show: false,
+        isAdd: false
       };
     },
     mounted() {
@@ -237,6 +238,7 @@
           img: '',
           is_show: 1,
         }
+        self.isAdd = true;
         if (self.$refs.upload) {
           self.$refs.upload.clearFiles();
         }
@@ -265,6 +267,7 @@
       handleEdit(index, row) {
         var self = this;
         self.dialogMessageMs = true;
+        self.isAdd = false;
         if (Number(row.is_show) == 0) {
           self.form = {
             id: row.id,

@@ -6,7 +6,7 @@
             </div>
         </div>
 
-        <el-dialog title="资讯类型" :visible.sync="dialogMessageTy" @close="close" :close-on-click-modal="false"
+        <el-dialog :title="isAdd ? '添加资讯类型' : '编辑'" center :visible.sync="dialogMessageTy" @close="close" :close-on-click-modal="false"
             width="800px">
             <el-form label-width="120px" :model="form">
                 <el-form-item label="资讯类型名称">
@@ -134,7 +134,8 @@
                     }
                 ],
                 fileLists: [],
-                is_show: false
+                is_show: false,
+                isAdd: false,
             };
         },
         mounted() {
@@ -162,6 +163,7 @@
             handleEdit(index, row) {
                 var self = this;
                 self.dialogMessageTy = true;
+                self.isAdd = false;
                 if (Number(row.is_show) == 0) {
                     self.form = {
                         icon: row.icon,
@@ -264,6 +266,7 @@
                 var self = this;
                 self.dialogMessageTy = true;
                 self.hasNewImage = false;
+                self.isAdd = true;
                 self.form = {
                     icon: '',
                     name: '',

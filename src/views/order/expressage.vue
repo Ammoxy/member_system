@@ -57,7 +57,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :visible.sync="dialogLogistic" title="创建物流" width="1000px" @close="close">
+        <el-dialog :visible.sync="dialogLogistic" :title="isAdd ? '创建物流' : '编辑'" center width="1000px" @close="close">
             <el-form label-width="100px" :model="logisticsInfo">
                 <el-form-item label="名称">
                     <el-input v-model="logisticsInfo.name"></el-input>
@@ -113,7 +113,8 @@
                 dialogLogistic: false,
                 id: '',
                 dialogDel: false,
-                keyword: ''
+                keyword: '',
+                isAdd: false
             }
         },
 
@@ -173,6 +174,7 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
+                self.isAdd = true;
             },
             close() {
                 var self = this;
@@ -204,6 +206,7 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
+                self.isAdd = false;
                 self.logisticsInfo = {
                     name: row.name,
                     logo: row.logo,

@@ -63,7 +63,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :visible.sync="dialogMerchants" title="添加部门" width="1000px">
+        <el-dialog :visible.sync="dialogMerchants" :title="isAdd == true ? '添加部门' : '编辑部门'" width="1000px" center>
             <el-form label-width="120px" :model="merchantInfo">
                 <el-form-item label="部门名称">
                     <el-input v-model="merchantInfo.name"></el-input>
@@ -100,14 +100,14 @@
                 <el-form-item label="详细地址">
                     <el-input v-model="merchantInfo.address"></el-input>
                 </el-form-item>
-                <el-form-item label="创建账号">
-                    <el-switch v-model="showUser" active-color="#2a9f93">
+                <!-- <el-form-item label="创建账号" v-if="isAdd">
+                    <el-switch v-model="showUser" active-color="#2a9f93" @change="changeSw">
                     </el-switch>
-                </el-form-item>
-                <el-form-item label="账号" v-if="showUser">
+                </el-form-item> -->
+                <el-form-item label="账号(选填)" v-if="isAdd">
                     <el-input v-model="merchantInfo.username" placeholder="请输入账号"></el-input>
                 </el-form-item>
-                <el-form-item label="输入密码" v-if="showUser">
+                <el-form-item label="输入密码(选填)" v-if="isAdd">
                     <el-input v-model="merchantInfo.password" placeholder="请输入密码" type="password"></el-input>
                 </el-form-item>
                 <div class="submit">
@@ -119,7 +119,7 @@
         </el-dialog>
 
         <!-- 佣金来源 -->
-        <el-dialog title="佣金来源" :visible.sync="dialogRec" width="80%">
+        <el-dialog title="佣金来源" :visible.sync="dialogRec" width="80%" center>
             <el-table :data="recDate" empty-text="暂无数据" border :header-cell-style="{ background: '#f0f0f0' }"
                 max-height="620">
                 <el-table-column prop="id" label="ID"></el-table-column>
@@ -216,6 +216,7 @@
                 recTotal: 0,
                 merchant_id: '',
                 username: localStorage.getItem("username"),
+                isAdd: false
             }
         },
 
@@ -319,32 +320,19 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
-                if (self.showUser) {
-                    self.merchantInfo = {
-                        name: '',
-                        type: '',
-                        address: '',
-                        phone: '',
-                        principal_name: '',
-                        parent_id: '',
-                        longitude: '',
-                        latitude: '',
-                        username: '',
-                        password: '',
-                    };
-                } else {
-                    self.merchantInfo = {
-                        name: '',
-                        type: '',
-                        address: '',
-                        phone: '',
-                        principal_name: '',
-                        parent_id: '',
-                        longitude: '',
-                        latitude: '',
-                    };
-                }
-
+                self.merchantInfo = {
+                    name: '',
+                    type: '',
+                    address: '',
+                    phone: '',
+                    principal_name: '',
+                    parent_id: '',
+                    longitude: '',
+                    latitude: '',
+                    username: '',
+                    password: '',
+                };
+                self.isAdd = true;
             },
             parentChange(val) {
                 var self = this;
@@ -365,6 +353,7 @@
             },
             newMerchants() {
                 var self = this;
+                console.log(self.merchantInfo);
                 if (self.merchantInfo.parent_id == '') {
                     self.merchantInfo.parent_id = 0;
                     self.merchantInfo.type = 1;
@@ -392,33 +381,18 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
-                if (self.showUser) {
-                    self.merchantInfo = {
-                        name: row.name,
-                        type: row.type,
-                        address: row.address,
-                        phone: row.phone,
-                        principal_name: row.principal_name,
-                        parent_id: row.parent_id,
-                        longitude: row.longitude,
-                        latitude: row.latitude,
-                        username: row.username,
-                        password: row.password,
-                        id: row.id
-                    };
-                } else {
-                    self.merchantInfo = {
-                        name: row.name,
-                        type: row.type,
-                        address: row.address,
-                        phone: row.phone,
-                        principal_name: row.principal_name,
-                        parent_id: row.parent_id,
-                        longitude: row.longitude,
-                        latitude: row.latitude,
-                        id: row.id
-                    };
-                }
+                self.merchantInfo = {
+                    name: row.name,
+                    type: row.type,
+                    address: row.address,
+                    phone: row.phone,
+                    principal_name: row.principal_name,
+                    parent_id: row.parent_id,
+                    longitude: row.longitude,
+                    latitude: row.latitude,
+                    id: row.id
+                };
+                self.isAdd = false;
             },
 
             getLoc(mapData) {

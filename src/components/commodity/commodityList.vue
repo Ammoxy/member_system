@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <el-dialog :visible.sync="dialogGood" title="添加商品" @close="close" width="85%">
+        <el-dialog :visible.sync="dialogGood" :title="isAdd ? '添加商品' : '编辑'" center @close="close" width="85%">
             <el-form label-width="150px" :model="goodsInfo">
                 <el-form-item label="是否上架">
                     <el-radio-group v-model="goodsInfo.on_shelf">
@@ -33,6 +33,9 @@
                             :value="item1.id">
                         </el-option>
                     </el-select>
+                    <span class="chose-btn">
+                        <el-button type="text" @click="allSel">全选部门</el-button>
+                    </span>
                 </el-form-item>
                 <!-- <div class="momey-info"> -->
                 <el-form-item label="商品分类">
@@ -244,6 +247,9 @@
                             :value="item1.id">
                         </el-option>
                     </el-select>
+                    <span class="chose-btn">
+                        <el-button type="text" @click="allSel">全选部门</el-button>
+                    </span>
                 </el-form-item>
                 <el-form-item label="运费">
                     <el-input v-model="goodsInfo.freight"></el-input>
@@ -404,6 +410,7 @@
                 oldThirdName: [],
                 is_fetch: true,
                 dialogSel: false,
+                isAdd: false
             };
         },
         mounted() {
@@ -537,6 +544,7 @@
                 }
                 self.isEidt = false;
                 self.isDisabled = false;
+                self.isAdd = true;
             },
 
             close() {
@@ -554,6 +562,7 @@
 
             newMerchants() {
                 var self = this;
+                console.log(self.goodsInfo);
                 if (self.goodsInfo.name && self.goodsInfo.intro && self.goodsInfo.share_title && self.goodsInfo
                     .img && self.goodsInfo.imgs && self.goodsInfo.price && self.goodsInfo.vip_price && self
                     .goodsInfo.repertory && self.goodsInfo.classify_id && self.goodsInfo.good_commissions && self
@@ -607,6 +616,16 @@
             merchantChange(val) {
                 var self = this;
                 self.goodsInfo.have_merchant = val;
+            },
+
+            allSel() {
+                var self = this;
+                var arr = [];
+                self.merchantList.forEach(item => {
+                    arr.push(item.id)
+                })
+                self.goodsInfo.have_merchant = arr;
+                // console.log(self.goodsInfo.have_merchant);
             },
 
             notifyChange(val, index, row) {
@@ -738,6 +757,7 @@
                 var arr3 = [];
                 self.isEidt = true;
                 self.isDisabled = true;
+                self.isAdd = false;
                 if (self.permissionData.includes("commodityEdit")) {
                     self.dialogGood = true;
                     API.goodDetail(self.id).then(res => {
@@ -1176,5 +1196,9 @@
 
     .box-card {
         width: 480px;
+    }
+
+    .chose-btn {
+        margin: 0 20px;
     }
 </style>

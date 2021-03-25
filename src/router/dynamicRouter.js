@@ -175,6 +175,14 @@ const dynamicRouter = [{
 					title: '资讯管理'
 				}
 			},
+			{
+				path: '/picture',
+				name: 'picture',
+				component: () => import('@/views/information/picture.vue'),
+				meta: {
+					title: '图片资源'
+				}
+			},
 		]
 	}, {
 		path: '/permission',

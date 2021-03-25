@@ -67,7 +67,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog :visible.sync="dialogClassify" title="添加分类" width="1000px" @close="close">
+        <el-dialog :visible.sync="dialogClassify" :title="isAdd ? '添加分类' : '编辑'" center width="1000px" @close="close">
             <el-form label-width="100px" :model="classifyInfo">
                 <el-form-item label="名称">
                     <el-input v-model="classifyInfo.name"></el-input>
@@ -160,7 +160,8 @@
                         label: "三级分类",
                     },
                 ],
-                have_img: false
+                have_img: false,
+                isAdd: false
             }
         },
 
@@ -260,6 +261,7 @@
                         sort: 0
                     };
                 }
+                self.isAdd = true;
             },
             close() {
                 var self = this;
@@ -368,6 +370,7 @@
                 } else {
                     self.$message.warning("无权操作");
                 }
+                self.isAdd = false;
                 if (row.type == 3) {
                     self.have_img = true;
                     if (Number(row.is_show) == 0) {

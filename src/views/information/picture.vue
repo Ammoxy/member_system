@@ -2,13 +2,13 @@
     <div v-loading="loading" element-loading-text="拼命加载中">
         <div class="handle-box">
             <div class="btn">
-                <el-button type="primary" @click="addBanner">添加轮播图</el-button>
+                <el-button type="primary" @click="addBanner">添加图片</el-button>
             </div>
         </div>
 
-        <el-dialog :title="isAdd ? '添加轮播图' : '编辑'" center :visible.sync="dialogBanner" @close="close" :close-on-click-modal="false" width="1000px">
+        <el-dialog :title="isAdd ? '添加图片' : '编辑'" center :visible.sync="dialogBanner" @close="close" :close-on-click-modal="false" width="800px">
             <el-form label-width="80px" :model="form">
-                <el-form-item label="是否显示">
+                <!-- <el-form-item label="是否显示">
                     <el-radio-group v-model="form.is_show">
                         <el-radio :label="1">是</el-radio>
                         <el-radio :label="2">否</el-radio>
@@ -17,13 +17,10 @@
                 <el-form-item label="图片排序">
                     <el-input v-model="form.sort"></el-input>
                 </el-form-item>
-                <el-form-item label="跳转资讯">
-                    <el-select v-model="form.target" placeholder="请选择跳转资讯" style="width: 400px">
-                        <el-option v-for="(item, index) in infoList" :key="index" :label="item.title" :value="item.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="轮播图">
+                <el-form-item label="跳转地址">
+                    <el-input v-model="form.target"></el-input>
+                </el-form-item> -->
+                <el-form-item label="图片">
                     <el-upload action="https://api.fengniaotuangou.cn/api/upload" ref="upload" :limit="1"
                         :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess" :on-remove="handleRemove"
                         list-type="picture-card" :on-exceed="handleExceed" :file-list='fileLists' :auto-upload="true"
@@ -31,6 +28,13 @@
                         <i slot="default" class="el-icon-plus"></i>
                     </el-upload>
                 </el-form-item>
+                <el-form-item label="显示位置">
+                    <el-select v-model="form.type" placeholder="请选择显示位置">
+                        <el-option v-for="item in picTyList" :key="item.val" :label="item.label" :value="item.val">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+
                 <div class="submit">
                     <el-form-item>
                         <el-button type="primary" @click="upload">提交</el-button>
@@ -42,12 +46,12 @@
 
         <el-table :data="tableDate" border :header-cell-style="{background:'#f0f0f0'}" max-height="620">
             <el-table-column prop="id" label="轮播图ID"></el-table-column>
-            <el-table-column prop="img" label="缩略图">
+            <el-table-column prop="image" label="缩略图">
                 <template slot-scope="scope">
-                    <div v-if="scope.row.img">
+                    <div v-if="scope.row.image">
                         <el-popover placement="top-start" title trigger="click">
-                            <img :src="scope.row.img" style="max-width: 800px; max-height: 800px" />
-                            <img slot="reference" :src="scope.row.img" style="max-width: 180px; max-height: 80px" />
+                            <img :src="scope.row.image" style="max-width: 800px; max-height: 800px" />
+                            <img slot="reference" :src="scope.row.image" style="max-width: 180px; max-height: 80px" />
                         </el-popover>
                     </div>
                     <div v-else>
@@ -55,21 +59,13 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="is_show" label="是否显示">
+            <!-- <el-table-column prop="is_show" label="是否显示">
                 <template slot-scope="scope">
                     <el-switch v-model="scope.row.is_show" active-color="#2a9f93"
                         @change="notifyChange(scope.row.is_show, scope.$index, scope.row)">
                     </el-switch>
                 </template>
-                <!-- <template slot-scope="scope">
-                    <div v-if="scope.row.is_show == 1">
-                        <span>显示</span>
-                    </div>
-                    <div v-if="scope.row.is_show == 2">
-                        <span>不显示</span>
-                    </div>
-                </template> -->
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="updated_at" label="更新时间"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
@@ -79,15 +75,15 @@
             </el-table-column>
         </el-table>
 
-        <!-- <div class="block">
+        <div class="block">
             <el-pagination @current-change="currentChange" :current-page.sync="current"
                 :page-sizes="[10, 20, 30, 40, 50]" :page-size="size" layout="sizes, prev, pager, next, jumper"
                 :total="total" @size-change="sizeChange">
             </el-pagination>
-        </div> -->
+        </div>
 
         <!-- 删除提示框 -->
-        <el-dialog :visible.sync="dialogDel" title="删除轮播图" width="20%" align="center" :close-on-click-modal="false">
+        <el-dialog :visible.sync="dialogDel" title="删除图片" width="20%" align="center" :close-on-click-modal="false">
             <div style="font-size: 20px; margin-bottom: 30px;">是否删除</div>
             <span>
                 <el-button type="primary" @click="toDel">删除</el-button>
@@ -112,64 +108,61 @@
 
                 tableDate: [],
 
-                // current: 1,
-                // size: 10,
-                // total: 0,
+                current: 1,
+                size: 10,
+                total: 0,
                 qiniuaddr: "https://tu.fengniaotuangou.cn", // 七牛云图片外链地址
 
                 hasNewImage: false,
                 form: {
-                    img: "",
-                    target: '',
-                    sort: '',
-                    is_show: 1
+                    image: '',
+                    type: ''
                 },
-                statetList: [{
-                        val: 1,
-                        label: '显示'
-                    },
-                    {
-                        val: 2,
-                        label: '不显示'
-                    }
-                ],
+                picTyList: [{
+                    val: 1,
+                    label: '小程序分类页面头部图片'
+                }, {
+                    val: 2,
+                    label: '其他'
+                }, ],
                 fileLists: [],
                 is_show: false,
-                infoList: [],
                 isAdd: false
             };
         },
         mounted() {
-            this.getBanner();
-            this.getDoc()
+            this.getPic(this.current, this.size);
         },
         methods: {
             // 获取轮播图
-            getBanner() {
+            getPic(cur, list) {
                 var self = this;
-                API.banners()
+                API.imgesList(cur, list)
                     .then((res) => {
                         self.loading = false;
-                        res.result.forEach(item => {
-                            // console.log(item);
-                            item.is_show == 1 ? item.is_show = true : item.is_show = false;
-                        })
-                        self.tableDate = res.result;
+                        self.tableDate = res.result.data;
+                        self.total = res.result.total;
                     })
                     .catch((err) => {
                         self.loading = false;
                     });
             },
 
-            getDoc() {
+
+            // 分页
+            currentChange(val) {
                 var self = this;
-                API.document(1, 500, 0)
-                    .then((res) => {
-                        self.infoList = res.result.data;
-                    })
-                    .catch((err) => {
-                        self.loading = false;
-                    });
+                self.current = val;
+                self.loading = true;
+                self.getPic(val, self.size);
+            },
+            // 每页多少条
+            sizeChange(val) {
+                var self = this;
+                self.size = val;
+                self.loading = true;
+                self.getPic(1, val);
+                self.current = 1;
             },
 
             // 操作
@@ -177,35 +170,18 @@
                 var self = this;
                 self.dialogBanner = true;
                 self.isAdd = false;
-                if (Number(row.is_show) == 0) {
-                    self.form = {
-                        img: row.img,
-                        id: row.id,
-                        target: Number(row.target),
-                        sort: row.sort,
-                        is_show: 2
-                    };
-                } else {
-                    self.form = {
-                        img: row.img,
-                        id: row.id,
-                        target: Number(row.target),
-                        sort: row.sort,
-                        is_show: 1
-                    };
+                self.form = {
+                    image: row.image,
+                    type: row.type,
+                    id: row.id
                 }
-                let urlStr = self.form.img.split(",");
+                let urlStr = self.form.image.split(",");
                 urlStr.forEach(item => {
                     let obj = new Object();
                     obj.url = item;
                     self.fileLists.push(obj);
                 });
             },
-            stateChange(val) {
-                var self = this;
-                self.form.is_show = val;
-            },
-
             handleDelete(index, row) {
                 var self = this;
                 self.dialogDel = true;
@@ -214,62 +190,31 @@
             toDel() {
                 var self = this;
                 self.dialogDel = false;
-                API.delBanner(self.id).then((res) => {
+                API.delImg(self.id).then((res) => {
                     self.$message.success("删除成功");
                     self.dialogDel = false;
-                    self.getBanner();
+                    self.getPic();
                 });
             },
-            notifyChange(val, index, row) {
-                var self = this;
-                console.log(row);
-                if (val == true) {
-                    self.form = {
-                        img: row.img,
-                        id: row.id,
-                        target: row.target,
-                        sort: row.sort,
-                        is_show: 1
-                    }
-                    API.createBanner(self.form).then(res => {
-                        self.$message.success("提交成功");
-                        self.getBanner();
-                    })
-                } else {
-                    self.form = {
-                        img: row.img,
-                        id: row.id,
-                        target: row.target,
-                        sort: row.sort,
-                        is_show: 2
-                    }
-                    API.createBanner(self.form).then(res => {
-                        self.$message.success("提交成功");
-                        self.getBanner();
-                    })
-                }
-            },
-
 
             // 上传图片
             upload() {
                 var self = this;
-                if (self.form.img && self.form.sort) {
+                if (self.form.image) {
                     const loading = self.$loading({
                         lock: true,
                         text: "提交中...",
                         spinner: "el-icon-loading",
                         background: "rgba(0, 0, 0, 0.7)",
                     });
-                    API.createBanner(self.form).then((res) => {
+                    API.createImg(self.form).then((res) => {
                         loading.close();
                         if (res.code == 10000) {
-                            self.getBanner();
+                            self.$message.success("添加成功");
+                            self.getPic();
                             self.form = {
-                                img: '',
-                                target: '',
-                                sort: '',
-                                is_show: 1
+                                image: '',
+                                type: ''
                             }
                             self.dialogBanner = false;
                         }
@@ -286,10 +231,8 @@
                 self.hasNewImage = false;
                 self.isAdd = true;
                 self.form = {
-                    img: '',
-                    target: '',
-                    sort: '',
-                    is_show: 1
+                    image: '',
+                    type: ''
                 }
                 if (self.$refs.upload) {
                     self.$refs.upload.clearFiles();
@@ -303,7 +246,7 @@
                 //移除图片
                 var self = this;
                 self.fileLists = fileList
-                self.form.img = ''
+                self.form.image = ''
             },
             beforeAvatarUpload(file) {
                 //文件上传之前调用做一些拦截限制
@@ -316,7 +259,7 @@
             handleAvatarSuccess(res, file) {
                 //图片上传成功
                 var self = this;
-                self.form.img = file.response.data;
+                self.form.image = file.response.data;
             },
             handleExceed(files, fileList) {
                 //图片上传超过数量限制

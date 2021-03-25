@@ -11,8 +11,8 @@
                 </template>
             </el-table-column>
         </el-table>
-
-        <el-dialog title="编辑" :visible.sync="dialogUser" :close-on-click-modal="false" width="800px">
+ 
+        <el-dialog title="编辑" center :visible.sync="dialogUser" :close-on-click-modal="false" width="800px">
             <el-form label-width="80px" :model="form">
                 <el-form-item label="名称">
                     <el-input v-model="form.name"></el-input>

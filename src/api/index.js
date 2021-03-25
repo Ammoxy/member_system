@@ -127,6 +127,23 @@ API.delDocument = function (id) {
 		id: id
 	})
 }
+// 新增图片
+API.createImg = function (data) {
+	return axios.post(url.CreateImg, data)
+}
+// 获取图片资源列表
+API.imgesList = function (currentPage, perPage) {
+	return axios.get(url.ImgesList, {
+		currentPage: currentPage,
+		perPage: perPage,
+	})
+}
+// 删除图片
+API.delImg = function (id) {
+	return axios.del(url.DelImg, {
+		id: id
+	})
+}
 
 // 新增分类
 API.createClassify = function (data) {

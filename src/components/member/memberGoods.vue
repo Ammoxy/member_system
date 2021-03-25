@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <el-dialog :visible.sync="dialogGood" title="添加商品" @close="close" width="1200px">
+        <el-dialog :visible.sync="dialogGood" :title="isAdd ? '添加商品' : '编辑'" center @close="close" width="1200px">
             <el-form label-width="150px" :model="goodsInfo">
                 <el-form-item label="是否上架">
                     <el-radio-group v-model="goodsInfo.on_shelf">
@@ -33,6 +33,9 @@
                             :value="item1.id">
                         </el-option>
                     </el-select>
+                    <span class="chose-btn">
+                        <el-button type="text" @click="allSel">全选部门</el-button>
+                    </span>
                 </el-form-item>
                 <el-form-item label="商品名称">
                     <el-input v-model="goodsInfo.name"></el-input>
@@ -173,6 +176,9 @@
                             :value="item1.id">
                         </el-option>
                     </el-select>
+                    <span class="chose-btn">
+                        <el-button type="text" @click="allSel">全选部门</el-button>
+                    </span>
                 </el-form-item>
                 <el-form-item label="运费">
                     <el-input v-model="goodsInfo.freight"></el-input>
@@ -314,7 +320,8 @@
                 permissionData: [],
                 is_fetch: true,
                 dialogSel: false,
-                isDisabled: false
+                isDisabled: false,
+                isAdd: false
             };
         },
         mounted() {
@@ -378,6 +385,7 @@
 
             addGoods() {
                 var self = this;
+                self.isAdd = true;
                 if (self.permissionData.includes("memberGoodsAdd")) {
                     self.dialogGood = true;
                 } else {
@@ -474,6 +482,16 @@
                 self.goodsInfo.have_merchant = val;
             },
 
+            allSel() {
+                var self = this;
+                var arr = [];
+                self.merchantList.forEach(item => {
+                    arr.push(item.id)
+                })
+                self.goodsInfo.have_merchant = arr;
+                // console.log(self.goodsInfo.have_merchant);
+            },
+
             notifyChange(val, index, row) {
                 var self = this;
                 console.log(row.id);
@@ -563,6 +581,7 @@
                 self.id = row.id;
                 var have_merchant = [];
                 self.isDisabled = true;
+                self.isAdd = false;
                 if (self.permissionData.includes("memberGoodsEdit")) {
                     self.dialogGood = true;
 
@@ -831,5 +850,8 @@
 
     .momey-info {
         display: flex;
+    }
+    .chose-btn {
+        margin: 0 20px;
     }
 </style>

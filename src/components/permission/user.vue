@@ -38,7 +38,7 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="添加用户" :visible.sync="dialogUser" width="60%" :close-on-click-modal="false">
+    <el-dialog :title="isAdd ? '添加用户' : '编辑'" center :visible.sync="dialogUser" width="60%" :close-on-click-modal="false">
       <div class="box">
         <el-form :model="form" label-width="80px">
           <el-form-item label="账号">
@@ -72,7 +72,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="修改密码" :visible.sync="dialogResetPassWord" width="500px" :close-on-click-modal="false">
+    <el-dialog title="修改密码" center :visible.sync="dialogResetPassWord" width="500px" :close-on-click-modal="false">
       <div class="box">
         <el-form :model="pwdForm" label-width="120px">
           <el-form-item label="账号">
@@ -144,6 +144,7 @@
         current: 1,
         size: 10,
         total: 0,
+        isAdd: false
       };
     },
     mounted() {
@@ -202,6 +203,7 @@
 
       addUser() {
         var self = this;
+        self.isAdd = true;
         if (self.permissionData.includes("manageAdd")) {
           self.dialogUser = true;
           self.form = {
@@ -233,6 +235,7 @@
       // 操作
       handleEdit(index, row) {
         var self = this;
+        self.isAdd = false;
         if (self.permissionData.includes("manageEdit")) {
           self.dialogUser = true;
         } else {
