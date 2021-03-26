@@ -66,6 +66,16 @@
                     </el-switch>
                 </template>
             </el-table-column> -->
+            <el-table-column prop="type" label="显示位置">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.type == 1">
+                        <span>小程序分类页面头部图片</span>
+                    </div>
+                    <div v-if="scope.row.type == 2">
+                        <span>其他</span>
+                    </div>
+                </template>
+            </el-table-column>
             <el-table-column prop="updated_at" label="更新时间"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
