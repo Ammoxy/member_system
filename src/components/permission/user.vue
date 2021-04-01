@@ -38,7 +38,8 @@
       </el-pagination>
     </div>
 
-    <el-dialog :title="isAdd ? '添加用户' : '编辑'" center :visible.sync="dialogUser" width="60%" :close-on-click-modal="false">
+    <el-dialog :title="isAdd ? '添加用户' : '编辑'" center :visible.sync="dialogUser" width="60%"
+      :close-on-click-modal="false">
       <div class="box">
         <el-form :model="form" label-width="80px">
           <el-form-item label="账号">
@@ -194,7 +195,7 @@
       // 获取商家
       getMerchants() {
         var self = this;
-        API.merchants(1, 100).then(res => {
+        API.merchants(1, 10000).then(res => {
           // console.log('getMerchants', res);
           self.merchantList = res.result.data;
         })
@@ -248,7 +249,7 @@
           password: "",
           enable: row.enable,
           role: row.role,
-          merchant_id: row.id
+          merchant_id: row.merchant_id
         };
       },
       // 重置密码
@@ -282,12 +283,17 @@
 
       handleDel(index, row) {
         var self = this;
+        self.id = row.id;
+
         if (self.permissionData.includes("manageDel")) {
-          self.dialogDel = true;
+          if (self.id != 1) {
+            self.dialogDel = true;
+          } else {
+            self.$message.warning("该账号无法删除!");
+          }
         } else {
           self.$message.warning("无权操作");
         }
-        self.id = row.id;
       },
       toDel() {
         var self = this;
