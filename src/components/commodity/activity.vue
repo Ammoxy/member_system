@@ -286,8 +286,8 @@
             handleRemove(file, fileList) {
                 //移除图片
                 var self = this;
-                self.files = fileList
-                self.activityInfo.img = ''
+                self.files = fileList;
+                self.activityInfo.img = '';
             },
             beforeAvatarUpload(file) {
                 //文件上传之前调用做一些拦截限制
@@ -316,8 +316,8 @@
             handleRemove1(file, fileList) {
                 //移除图片
                 var self = this;
-                self.files = fileList
-                self.activityInfo.background = ''
+                self.files = fileList;
+                self.activityInfo.background = '';
             },
             beforeAvatarUpload1(file) {
                 //文件上传之前调用做一些拦截限制
